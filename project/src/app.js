@@ -1,9 +1,20 @@
-import express from 'express';
-import requestsRouter from './modules/requests/requests.routes.js';
+const express = require('express');
+const requestsRoutes = require('./modules/requests/requests.routes');
 
 const app = express();
 
 app.use(express.json());
-app.use('/requests', requestsRouter);
+app.use('/requests', requestsRoutes);
 
-export default app;
+app.use((err, req, res, next) => {
+    console.error(err);
+    const status = err.statusCode || 500;
+    res.status(status).json({
+        error: {
+            message: err.message || 'Internal Server Error',
+            status
+        }
+    });
+});
+
+module.exports = app;

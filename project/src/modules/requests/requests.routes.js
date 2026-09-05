@@ -1,42 +1,52 @@
-import { Router } from 'express';
-import { requestsStore } from './requests.store.js';
-import { isValidStatus, isTerminal, canTransition } from './request-status.js';
+const express = require('express');
+const service = require('./requests.service');
 
-const router = Router();
+const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.json(requestsStore.getAll());
+router.get('/', async (req, res, next) => {
+    try {
+        const requests = await service.getAllRequests();
+        res.json(requests);
+    } catch (err) {
+        next(err);
+    }
 });
 
-router.post('/', (req, res) => {
-  const { title } = req.body;
-  if (!title) {
-    return res.status(400).json({ error: { code: 'MISSING_TITLE', message: 'El título es obligatorio' } });
-  }
-  const created = requestsStore.create({ title });
-  res.status(201).json(created);
+router.get('/:id', async (req, res, next) => {
+    try {
+        const request = await service.getRequestById(req.params.id);
+        res.json(request);
+    } catch (err) {
+        next(err);
+    }
 });
 
-router.patch('/:id', (req, res) => {
-  const { id } = req.params;
-  const { status: nextStatus } = req.body;
-  const item = requestsStore.getById(id);
-
-  if (!item) {
-    return res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Solicitud no encontrada' } });
-  }
-  if (!isValidStatus(nextStatus)) {
-    return res.status(400).json({ error: { code: 'INVALID_STATUS', message: 'Estado no válido' } });
-  }
-  if (isTerminal(item.status)) {
-    return res.status(409).json({ error: { code: 'REQUEST_IN_TERMINAL_STATUS', message: 'La solicitud está en un estado terminal' } });
-  }
-  if (!canTransition(item.status, nextStatus)) {
-    return res.status(409).json({ error: { code: 'INVALID_TRANSITION', message: `No se puede pasar de ${item.status} a${nextStatus}` } });
-  }
-
-  const updated = requestsStore.updateStatus(id, nextStatus);
-  res.json(updated);
+router.post('/', async (req, res, next) => {
+    try {
+        const request = await service.createRequest(req.body);
+        res.status(201).json(request);
+    } catch (err) {
+        next(err);
+    }
 });
 
-export default router;
+router.patch('/:id', async (req, res, next) => {
+    try {
+        const { status } = req.body;
+        const request = await service.updateRequestStatus(req.params.id, status);
+        res.json(request);
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/:id/history', async (req, res, next) => {
+    try {
+        const history = await service.getRequestHistory(req.params.id);
+        res.json(history);
+    } catch (err) {
+        next(err);
+    }
+});
+
+module.exports = router;
