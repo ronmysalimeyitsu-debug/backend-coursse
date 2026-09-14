@@ -1,59 +1,96 @@
-const db = require('../../database/pool');
+import { pool } from '../../database/pool.js';
 
-class RequestsStore {
-    async findAll(client = db) {
-        const query = 'SELECT id, title, status, created_at, updated_at FROM requests ORDER BY created_at DESC';
-        const result = await client.query(query);
-        return result.rows;
-    }
+const REQUEST_COLUMNS = `
+  id,
+  title,
+  description,
+  priority,
+  status,
+  created_by,
+  created_at,
+  updated_at
+`;
 
-    async findById(id, client = db) {
-        const query = 'SELECT id, title, status, created_at, updated_at FROM requests WHERE id = $1';
-        const result = await client.query(query, [id]);
-        return result.rows[0];
-    }
+export async function findAll(filters = {}, db = pool) {
+  const conditions = [];
+  const values = [];
 
-    async create(title, client = db) {
-        const query = `
-            INSERT INTO requests (title, status, created_at, updated_at) 
-            VALUES ($1, 'open', NOW(), NOW()) 
-            RETURNING id, title, status, created_at, updated_at
-        `;
-        const result = await client.query(query, [title]);
-        return result.rows[0];
-    }
+  if (filters.status) {
+    values.push(filters.status);
+    conditions.push(`status = $${values.length}`);
+  }
+  if (filters.priority) {
+    values.push(filters.priority);
+    conditions.push(`priority = $${values.length}`);
+  }
+  if (filters.createdBy) {
+    values.push(filters.createdBy);
+    conditions.push(`created_by = $${values.length}`);
+  }
 
-    async updateStatus(id, newStatus, client = db) {
-        const query = `
-            UPDATE requests 
-            SET status = $1, updated_at = NOW() 
-            WHERE id = $2 
-            RETURNING id, title, status, created_at, updated_at
-        `;
-        const result = await client.query(query, [newStatus, id]);
-        return result.rows[0];
-    }
-
-    async addHistory(requestId, previousStatus, newStatus, client = db) {
-        const query = `
-            INSERT INTO request_status_history (request_id, previous_status, new_status, changed_at) 
-            VALUES ($1, $2, $3, NOW()) 
-            RETURNING id, request_id, previous_status, new_status, changed_at
-        `;
-        const result = await client.query(query, [requestId, previousStatus, newStatus]);
-        return result.rows[0];
-    }
-
-    async findHistoryByRequestId(requestId, client = db) {
-        const query = `
-            SELECT id, request_id, previous_status, new_status, changed_at 
-            FROM request_status_history 
-            WHERE request_id = $1 
-            ORDER BY changed_at DESC
-        `;
-        const result = await client.query(query, [requestId]);
-        return result.rows;
-    }
+  const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
+  const result = await db.query(
+    `SELECT ${REQUEST_COLUMNS} FROM requests ${where} ORDER BY id`,
+    values
+  );
+  return result.rows;
 }
 
-module.exports = new RequestsStore();
+export async function findById(id, db = pool) {
+  const result = await db.query(
+    `SELECT ${REQUEST_COLUMNS} FROM requests WHERE id = $1`,
+    [id]
+  );
+  return result.rows[0] ?? null;
+}
+
+export async function insertRequest({ title, description, priority, createdBy }, db = pool) {
+  const result = await db.query(
+    `INSERT INTO requests (title, description, priority, created_by)
+     VALUES ($1, $2, $3, $4)
+     RETURNING ${REQUEST_COLUMNS}`,
+    [title, description, priority, createdBy]
+  );
+  return result.rows[0];
+}
+
+export async function updateRequest(id, changes, db = pool) {
+  const assignments = [];
+  const values = [];
+
+  for (const field of ['title', 'description', 'priority', 'status']) {
+    if (changes[field] !== undefined) {
+      values.push(changes[field]);
+      assignments.push(`${field} = $${values.length}`);
+    }
+  }
+
+  values.push(id);
+  const result = await db.query(
+    `UPDATE requests
+     SET ${assignments.join(', ')}, updated_at = CURRENT_TIMESTAMP
+     WHERE id = $${values.length}
+     RETURNING ${REQUEST_COLUMNS}`,
+    values
+  );
+  return result.rows[0] ?? null;
+}
+
+export async function insertStatusHistory(requestId, previousStatus, newStatus, db = pool, changedBy = null) {
+  await db.query(
+    `INSERT INTO request_status_history (request_id, previous_status, new_status, changed_by)
+     VALUES ($1, $2, $3, $4)`,
+    [requestId, previousStatus, newStatus, changedBy]
+  );
+}
+
+export async function findHistory(requestId, db = pool) {
+  const result = await db.query(
+    `SELECT previous_status, new_status, changed_by, changed_at
+     FROM request_status_history
+     WHERE request_id = $1
+     ORDER BY id`,
+    [requestId]
+  );
+  return result.rows;
+}

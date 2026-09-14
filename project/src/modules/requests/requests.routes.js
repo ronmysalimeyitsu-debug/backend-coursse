@@ -1,52 +1,54 @@
-const express = require('express');
-const service = require('./requests.service');
+import express from 'express';
+import {
+  listRequests,
+  getRequest,
+  createRequest,
+  patchRequest,
+  getHistory
+} from './requests.service.js';
+import { respondError } from '../../http/respond-error.js';
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => {
-    try {
-        const requests = await service.getAllRequests();
-        res.json(requests);
-    } catch (err) {
-        next(err);
-    }
+router.get('/', async (req, res) => {
+  try {
+    const { status, priority } = req.query;
+    res.status(200).json(await listRequests(req.auth, { status, priority }));
+  } catch (error) {
+    respondError(res, error);
+  }
 });
 
-router.get('/:id', async (req, res, next) => {
-    try {
-        const request = await service.getRequestById(req.params.id);
-        res.json(request);
-    } catch (err) {
-        next(err);
-    }
+router.get('/:id', async (req, res) => {
+  try {
+    res.status(200).json(await getRequest(req.auth, Number(req.params.id)));
+  } catch (error) {
+    respondError(res, error);
+  }
 });
 
-router.post('/', async (req, res, next) => {
-    try {
-        const request = await service.createRequest(req.body);
-        res.status(201).json(request);
-    } catch (err) {
-        next(err);
-    }
+router.get('/:id/history', async (req, res) => {
+  try {
+    res.status(200).json(await getHistory(req.auth, Number(req.params.id)));
+  } catch (error) {
+    respondError(res, error);
+  }
 });
 
-router.patch('/:id', async (req, res, next) => {
-    try {
-        const { status } = req.body;
-        const request = await service.updateRequestStatus(req.params.id, status);
-        res.json(request);
-    } catch (err) {
-        next(err);
-    }
+router.post('/', async (req, res) => {
+  try {
+    res.status(201).json(await createRequest(req.auth, req.body));
+  } catch (error) {
+    respondError(res, error);
+  }
 });
 
-router.get('/:id/history', async (req, res, next) => {
-    try {
-        const history = await service.getRequestHistory(req.params.id);
-        res.json(history);
-    } catch (err) {
-        next(err);
-    }
+router.patch('/:id', async (req, res) => {
+  try {
+    res.status(200).json(await patchRequest(req.auth, Number(req.params.id), req.body));
+  } catch (error) {
+    respondError(res, error);
+  }
 });
 
-module.exports = router;
+export default router;

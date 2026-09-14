@@ -1,7 +1,24 @@
+-- 001 · Requests table: the persistent form of the class-03 resource.
+-- Run this file first, in the Supabase SQL Editor.
+
 CREATE TABLE requests (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title VARCHAR(255) NOT NULL,
-    status VARCHAR(50) NOT NULL DEFAULT 'open' CHECK (status IN ('open', 'in_progress', 'closed')),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  title VARCHAR(200) NOT NULL,
+  description TEXT,
+  priority VARCHAR(20) NOT NULL DEFAULT 'medium',
+  status VARCHAR(30) NOT NULL DEFAULT 'open',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT requests_priority_check
+    CHECK (priority IN ('low', 'medium', 'high')),
+  CONSTRAINT requests_status_check
+    CHECK (
+      status IN (
+        'open',
+        'in_progress',
+        'resolved',
+        'closed',
+        'cancelled'
+      )
+    )
 );

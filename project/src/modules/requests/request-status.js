@@ -1,17 +1,26 @@
-const RequestStatus = {
-    OPEN: 'open',
-    IN_PROGRESS: 'in_progress',
-    CLOSED: 'closed'
+// Domain rules for the request lifecycle. Unchanged since class 03:
+// pure domain rules do not depend on where the data lives.
+
+export const STATUSES = ['open', 'in_progress', 'resolved', 'closed', 'cancelled'];
+
+export const TERMINAL_STATUSES = ['closed', 'cancelled'];
+
+const ALLOWED_TRANSITIONS = {
+  open: ['in_progress', 'cancelled'],
+  in_progress: ['resolved', 'cancelled'],
+  resolved: ['in_progress', 'closed'],
+  closed: [],
+  cancelled: []
 };
 
-const VALID_TRANSITIONS = {
-    [RequestStatus.OPEN]: [RequestStatus.IN_PROGRESS, RequestStatus.CLOSED],
-    [RequestStatus.IN_PROGRESS]: [RequestStatus.CLOSED],
-    [RequestStatus.CLOSED]: []
-};
-
-function isValidTransition(currentStatus, newStatus) {
-    return VALID_TRANSITIONS[currentStatus]?.includes(newStatus) || false;
+export function isValidStatus(status) {
+  return STATUSES.includes(status);
 }
 
-module.exports = { RequestStatus, isValidTransition };
+export function isTerminal(status) {
+  return TERMINAL_STATUSES.includes(status);
+}
+
+export function canTransition(from, to) {
+  return (ALLOWED_TRANSITIONS[from] ?? []).includes(to);
+}

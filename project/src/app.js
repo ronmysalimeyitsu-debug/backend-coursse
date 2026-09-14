@@ -1,20 +1,24 @@
-const express = require('express');
-const requestsRoutes = require('./modules/requests/requests.routes');
+// Application setup: middlewares and module mounting. It does not open any port.
+import express from 'express';
+import { corsPolicy } from './middleware/cors.js';
+import authRoutes from './modules/auth/auth.routes.js';
+import requestsRoutes from './modules/requests/requests.routes.js';
+import { authenticate } from './middleware/authenticate.js';
 
 const app = express();
 
+// CORS first: preflights must be answered before anything else runs.
+app.use(corsPolicy);
+
+// Parses incoming JSON bodies into req.body.
 app.use(express.json());
-app.use('/requests', requestsRoutes);
 
-app.use((err, req, res, next) => {
-    console.error(err);
-    const status = err.statusCode || 500;
-    res.status(status).json({
-        error: {
-            message: err.message || 'Internal Server Error',
-            status
-        }
-    });
-});
+// /auth mixes public routes (register, login) and one protected route
+// (/me), so the module applies `authenticate` internally where needed.
+app.use('/auth', authRoutes);
 
-module.exports = app;
+// Protect the module so authenticate runs first and builds req.auth 
+// (or answers 401 and the router never runs):
+app.use('/requests', authenticate, requestsRoutes);
+
+export default app;

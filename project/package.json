@@ -1,14 +1,19 @@
 {
-  "name": "project-backend",
-  "version": "1.0.0",
+  "name": "request-api",
+  "version": "5.0.0",
+  "private": true,
+  "description": "Request API starter for class 05",
+  "type": "module",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "node --watch src/server.js"
+    "db:check": "node scripts/check-database.js",
+    "validate:class-05": "node scripts/validate-class-05.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "pg": "^8.11.3"
+    "express": "^5.1.0",
+    "jose": "^5.9.6",
+    "pg": "^8.13.1"
   }
 }
