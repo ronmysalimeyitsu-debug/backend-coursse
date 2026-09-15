@@ -1,0 +1,2 @@
+Pega aqui la salida final de: npm run validate:class-06
+(la salida no contiene secretos; no agregues capturas de tu .env)
