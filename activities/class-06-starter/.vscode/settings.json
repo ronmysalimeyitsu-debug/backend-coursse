@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "aws-0-us-west-2.pooler.supabase.com",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "supabse DB",
+            "database": "postgres",
+            "username": "postgres.fsweolekywdriilqwpzb",
+            "password": "postgresql://postgres.fsweolekywdriilqwpzb:RONMYJOSESALIMEYMEJIAS@aws-0-us-west-2.pooler.supabase.com:5432/postgres"
+        }
+    ]
+}
