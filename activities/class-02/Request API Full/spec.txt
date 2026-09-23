@@ -1,0 +1,18 @@
+Resource: Request
+Endpoints:
+ - GET /requests
+ - GET /requests/:id
+ - POST /requests
+Expected statuses:
+ - 200 for successful queries
+ - 201 when a request is created
+ - 400 when required data is missing
+ - 404 when a request does not exist
+Representation:
+ - JSON
+Storage:
+ - In memory
+Excluded:
+ - Database, Authentication, TypeScript
+ - Controllers, Services, Repository
+ - Update and delete operations
