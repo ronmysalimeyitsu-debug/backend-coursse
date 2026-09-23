@@ -43,6 +43,18 @@ app.post("/requests", (req, res) => {
   return res.status(201).json(newRequest);
 });
 
+app.delete("/requests/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const index = requests.findIndex((r) => r.id === id);
+
+  if (index === -1) {
+    return res.status(404).json({ error: "Request not found" });
+  }
+
+  requests.splice(index, 1);
+  return res.status(200).json({ message: "Request deleted successfully" });
+});
+
 app.listen(PORT, () => {
   console.log(`Request API Lite escuchando en http://localhost:${PORT}`);
 });
