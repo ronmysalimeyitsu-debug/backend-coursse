@@ -6,10 +6,11 @@
 //   'forbidden' -> 403  identified actor, operation not allowed
 //   'resource'  -> 404  the resource does not exist (or must not be revealed)
 //   'domain'    -> 409  conflict with the current state of the resource
+// src/errors/app-error.js
 export class AppError extends Error {
   constructor(category, code, message) {
     super(message);
-    this.category = category;
-    this.code = code;
+    this.category = category; // Ej: 'contract', 'auth', 'resource', 'domain'
+    this.code = code;         // Ej: 'INVALID_PRIORITY'
   }
 }

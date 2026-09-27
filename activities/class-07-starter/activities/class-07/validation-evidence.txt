@@ -1,10 +1,26 @@
-Pega aquí la salida REAL y COMPLETA de:
+CLASS 07 INCIDENT VALIDATION
 
-    npm run validate:class-07
+Baseline
+[01/12] Existing contract preserved .......... PASS
 
-Debe incluir las 12 verificaciones con sus secciones (Baseline, Input and
-errors, Traceability, Operation), la línea de Cleanup y el FINAL RESULT.
+Input and errors
+[02/12] Invalid id returns 400 ............... PASS
+[03/12] Invalid priority returns 400 ......... PASS
+[04/12] Unknown request returns 404 .......... PASS
+[05/12] Invalid transition returns 409 ....... PASS
+[06/12] Unexpected errors return 500 ......... PASS
+[07/12] Internal details remain hidden ....... PASS
 
-Antes de guardar, revisa que no haya ninguna credencial pegada por error:
-ni DATABASE_URL, ni JWT_SECRET, ni tokens. Si aparece algo así,
-reemplázalo por [configured].
+Traceability
+[08/12] Response contains request id ......... PASS
+[09/12] Log contains the same request id ..... PASS
+[10/12] Authorization header is not logged ... PASS
+
+Operation
+[11/12] Health endpoint responds ............. PASS
+[12/12] Readiness checks PostgreSQL .......... PASS
+
+Cleanup
+Temporary validation data removed successfully.
+
+FINAL RESULT: PASSED (12/12)

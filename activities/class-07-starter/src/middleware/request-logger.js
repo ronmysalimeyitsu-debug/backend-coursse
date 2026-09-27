@@ -1,29 +1,43 @@
-// OPS-703 · Request logger middleware (guided skeleton).
-//
-// Goal: ONE structured JSON line per finished request, whatever its
-// outcome. The logger module (src/logging/logger.js) already formats and
-// writes lines — this middleware only decides WHEN to log and WHICH
-// fields to include.
-//
-// TODO(OPS-703): implement the middleware. Checklist:
-//   [ ] Record the start time when the request enters
-//       (process.hrtime.bigint() measures monotonic time).
-//   [ ] Subscribe to the response 'finish' event — the only moment the
-//       final status code is known.
-//   [ ] Build the fields from an explicit ALLOWLIST:
-//       requestId, method, path, status, durationMs
-//       ... plus userId when req.auth exists, and res.locals.errorCode
-//       when the error handler set one.
-//   [ ] Use logger.error with event 'request_failed' for status >= 500,
-//       logger.info with event 'request_completed' otherwise.
-//   [ ] Call next() immediately — logging must never delay the request.
-//
-// Questions before coding:
-//   - Why an allowlist instead of logging the whole request object?
-//   - Which header must NEVER appear in a log line? (INC brief OPS-703)
-import { logger } from '../logging/logger.js';
+function formatLog(level, event, fields = {}) {
+  return JSON.stringify({
+    timestamp: new Date().toISOString(),
+    level,
+    event,
+    ...fields
+  });
+}
+
+export const logger = {
+  info(event, fields) {
+    console.log(formatLog('info', event, fields));
+  },
+  error(event, fields) {
+    console.error(formatLog('error', event, fields));
+  }
+};
 
 export function requestLogger(req, res, next) {
-  // TODO(OPS-703): replace this pass-through with the real implementation.
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const durationMs = Date.now() - start;
+    
+    // ALLOWLIST ESTRICTA: Solo se registran campos permitidos y seguros
+    // NUNCA se incluye req.headers ni req.body para proteger credenciales y tokens
+    const fields = {
+      requestId: req.requestId,
+      method: req.method,
+      path: req.path,
+      status: res.statusCode,
+      durationMs
+    };
+
+    if (res.statusCode >= 500) {
+      logger.error('request_failed', fields);
+    } else {
+      logger.info('request_completed', fields);
+    }
+  });
+
   next();
 }
