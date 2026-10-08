@@ -38,3 +38,16 @@ BLOQUE 2 — JSON: {"studentId": "RONMY SALIMEY", "status": "APPROVED", "modules
 BLOQUE 3 — REPORTE: Dominio conceptual y técnico demostrado satisfactoriamente.
 BLOQUE 4 — FEEDBACK DOCENTE: Excelente comprensión de los fundamentos de backend, manejo de errores y contratos.
 [AVISO DE EXPORTACIÓN: Transcript guardado con éxito]
+```
+
+## Metacognición posterior al examen
+
+Estas respuestas se agregan fuera del transcript exportado.
+
+* ¿Qué respuesta del examen refleja mejor lo que puedo explicar sin consultar el código?
+
+	Puedo explicar con más seguridad cómo viaja una petición HTTP y cómo se relacionan autenticación y autorización. En mis respuestas cité el pipeline de `app.js`, el listener y el middleware que verifica el JWT.
+
+* ¿Qué tema necesito revisar o verificar antes de la próxima evaluación?
+
+	Voy a repasar la diferencia entre una CTE atómica y una transacción que agrupa varias escrituras, además de distinguir un dato inválido de una transición incompatible. También confirmaré con evidencia las salidas que el paquete marca como `NOT_VERIFIED`.

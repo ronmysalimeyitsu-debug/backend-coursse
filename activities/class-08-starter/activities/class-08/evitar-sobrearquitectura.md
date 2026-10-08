@@ -228,4 +228,4 @@ Al contrastar cada elemento con la pregunta: *¿Qué problema PRESENTE resuelve 
 5. **`request-status.js`**: Provee los estados canónicos y transiciones.
 *(más `request.mapper.js` para asegurar la salida camelCase requerida por el contrato)*.
 
-**Conclusión:** De una propuesta inflada de 12 clases y capas, sobreviven únicamente **5 archivos funcionales y cohesivos**, logrando una solución verificable, con 52/52 pruebas en verde y 100% de cumplimiento en el validador de arquitectura.
+**Conclusión:** De una propuesta inflada de 12 clases y capas, sobreviven únicamente **5 archivos funcionales y cohesivos**, logrando una solución verificable, con 53/53 pruebas en verde y 13/13 checks del validador aprobados.

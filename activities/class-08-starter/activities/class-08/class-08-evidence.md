@@ -6,7 +6,7 @@ archivo reúne desde ya la evidencia que ese checkpoint pedirá.
 
 ## Evidencia mínima del tema 8
 
-* Baseline anterior al refactor (commit `class-08-baseline`): `5429366`
+* Baseline anterior al refactor: tag `class-08-baseline` → commit `5429366` (snapshot de origen; conserva su mensaje original).
 * Commits separados de refactor y feature (`class-08-refactor`, `class-08-feature`): `67a7a9d` y `12ae761`.
 * `responsibility-map.md` completo: sí
 * Separación route/service/store/policy:
@@ -19,8 +19,8 @@ archivo reúne desde ya la evidencia que ese checkpoint pedirá.
 * Historial y transacción consistentes: Evento `request_claimed` generado en `request_history` dentro de la misma transacción con `withTransaction(client)`.
 * Pruebas de policy (sin HTTP) y de API:
   - `test/request-policy.test.js`: 5 pruebas unitarias puras en verde (5 pass)
-  - `test/requests-claim.test.js`: 8 pruebas de integración HTTP en verde (8 pass)
-  - Total suite: 52 pass, 0 fail, 0 todo
+  - `test/requests-claim.test.js`: 9 pruebas de integración HTTP en verde (9 pass)
+  - Total suite: 53 pass, 0 fail, 0 todo
 * Rollback de historial ante FK inválida: comprobado por el check 11 del validador; estado abierto/no asignado y cero eventos de claim.
 * Resultado del validador: FINAL RESULT: PASSED (13/13) registrado en `validation-evidence.txt`
 
@@ -33,4 +33,4 @@ archivo reúne desde ya la evidencia que ese checkpoint pedirá.
 
 El refactor consistió en desacoplar el handler monolítico de `GET /requests/:id/history`, moviendo el SQL a `requests.store.js`, las reglas de visibilidad a `request.policy.js` (`canViewHistory`), el formateo a `request.mapper.js` y la orquestación a `requests.service.js` (`getHistory`), dejando la ruta delgada y sin SQL.
 La nueva funcionalidad (FEATURE-801) añadió el reclamo de solicitudes (`POST /requests/:id/claim`): la regla de negocio pura se definió en `canClaimRequest` (`request.policy.js`) verificando que solo un agente pueda reclamar y que la solicitud esté abierta y sin asignar; la coordinación se ubicó en `claimRequest` (`requests.service.js`) gestionando la transacción atómica; y la persistencia se ubicó en `assignRequest` (`requests.store.js`) actualizando `assigned_to`, `status` y `updated_at`.
-Las 39 pruebas de la suite de regresión previa se mantuvieron 100% en verde tras el refactor, y las 13 pruebas nuevas (5 de policy y 8 de claim) verificaron la nueva funcionalidad para un total de 52/52 pruebas aprobadas.
+Las 39 pruebas de la suite de regresión previa se mantuvieron 100% en verde tras el refactor, y las 14 pruebas nuevas (5 de policy y 9 de API claim) verifican la nueva funcionalidad para un total de 53/53 pruebas aprobadas.

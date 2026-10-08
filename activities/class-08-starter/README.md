@@ -86,6 +86,14 @@ Lee [`activities/class-08/migration-005-decisions-and-lab.md`](activities/class-
 
 Lee [`activities/class-08/transactions-and-history.md`](activities/class-08/transactions-and-history.md). El validador ejecuta un rollback real ante una FK inválida y confirma que no quede asignación parcial ni evento huérfano.
 
+## Pruebas API y cierre
+
+Completa [`activities/class-08/api-tests-and-validator.md`](activities/class-08/api-tests-and-validator.md): compara policy con API, recorre la matriz del claim, interpreta el validador en tres momentos y escribe el cierre arquitectónico.
+
+## Entrega y checkpoint
+
+Usa [`activities/class-08/delivery-and-checkpoint.md`](activities/class-08/delivery-and-checkpoint.md) para revisar el paquete, las lecturas de evaluación con IA y el ticket de salida de 12 preguntas antes de la clase 9.
+
 > El taller es **autocontenido**: si un bloque no se completa en clase, se
 > completa en casa — mismo starter, mismos validadores, mismas láminas
 > publicadas. Lo único con hora fija es la evaluación de entrada (se hace

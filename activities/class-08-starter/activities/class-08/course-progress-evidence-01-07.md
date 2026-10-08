@@ -5,14 +5,14 @@ Generado automáticamente — completa las secciones marcadas con [COMPLETAR] an
 
 ## Metadata
 
-* studentId: [RONMY SALIMEY]
+* studentId: RONMY SALIMEY
 * promptVersion: ITSU-CHECKPOINT-01-07-1.0
 * rubricVersion: BACKEND-01-07-R1
 * generatedAt: 2026-10-04T09:27:38.928Z (EXECUTED_NOW)
 * repoRoot: backend-coursse
 * commit: a40d8e5 (EXECUTED_NOW)
 * repositorioRemoto: https://github.com/ronmysalimeyitsu-debug/backend-coursse.git (EXECUTED_NOW) — verifica que sea TU repositorio antes de continuar
-* modeloUtilizado: [COMPLETAR después de ejecutar el prompt]
+* modeloUtilizado: GitHub Copilot (informe generado el 2026-10-07)
 
 ### Contexto de git (informativo, EXECUTED_NOW)
 

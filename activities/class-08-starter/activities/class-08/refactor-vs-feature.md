@@ -52,7 +52,7 @@ La meta no es reescribir el endpoint: las piezas necesarias ya existen o tienen 
 
 Si un paso rompe la suite, detente y deshaz únicamente ese paso antes de continuar. Los pasos pequeños reducen el área sospechosa a una responsabilidad.
 
-En el estado final de este starter, la route ya quedó reducida a parsear el id, llamar a `getHistory` y responder. La suite completa de después de FEATURE-801 tiene 52 pass, 0 todo y 0 fail; ese conteo final no reemplaza el resultado de regresión que debe quedar registrado para el refactor antes de mezclar la feature.
+En el commit de FEATURE-801 la suite tenía 52 pass; después se agregó un caso API para `in_progress`, `resolved` y `closed`, y el estado actual queda en 53 pass, 0 todo y 0 fail. La route ya quedó reducida a parsear el id, llamar a `getHistory` y responder. El conteo actual no reemplaza el resultado de regresión que debe quedar registrado para el refactor antes de mezclar la feature.
 
 ## Papel de la suite
 

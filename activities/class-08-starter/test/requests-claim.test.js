@@ -103,6 +103,36 @@ test('a terminal request cannot be claimed', async () => {
   assert.equal(response.status, 409);
 });
 
+test('in_progress, resolved and closed requests cannot be claimed', async () => {
+  const requester = await createUser({ name: 'state-owner' });
+  const agent = await createUser({ name: 'state-agent', role: 'agent' });
+  const reqToken = await loginAs(requester);
+  const agentToken = await loginAs(agent);
+  const scenarios = [
+    { status: 'in_progress', transitions: ['in_progress'], error: 'INVALID_STATUS_TRANSITION' },
+    { status: 'resolved', transitions: ['in_progress', 'resolved'], error: 'INVALID_STATUS_TRANSITION' },
+    { status: 'closed', transitions: ['in_progress', 'resolved', 'closed'], error: 'REQUEST_IN_TERMINAL_STATUS' }
+  ];
+
+  for (const scenario of scenarios) {
+    const created = await createRequestAs(reqToken);
+    for (const status of scenario.transitions) {
+      const transition = await request(app)
+        .patch(`/requests/${created.id}`)
+        .set('Authorization', `Bearer ${agentToken}`)
+        .send({ status });
+      assert.equal(transition.status, 200, `could not prepare ${scenario.status}`);
+    }
+
+    const response = await request(app)
+      .post(`/requests/${created.id}/claim`)
+      .set('Authorization', `Bearer ${agentToken}`);
+
+    assert.equal(response.status, 409, `claim of ${scenario.status} should conflict`);
+    assert.equal(response.body.error?.code, scenario.error);
+  }
+});
+
 test('assignedTo in the body is rejected as a server-controlled field', async () => {
   const requester = await createUser({ name: 'ctrl-owner' });
   const agent = await createUser({ name: 'ctrl-agent', role: 'agent' });

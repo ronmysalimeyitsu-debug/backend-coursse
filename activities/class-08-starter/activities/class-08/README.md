@@ -10,6 +10,7 @@
 * `ai-self-evaluation-01-07.md` — RESULT_CODE + JSON + reporte + tu lectura crítica.
 * `ai-knowledge-exam-01-07.md` — el transcript completo del examen de conocimiento (segunda conversación del checkpoint).
 * `class-08-evidence.md` — la evidencia del tema 8 para el checkpoint de la próxima clase.
+* `delivery-and-checkpoint.md` — checklist, lecturas de evaluación con IA, ticket de salida y estado real del empaquetado.
 
 ## Qué NO entregas
 
