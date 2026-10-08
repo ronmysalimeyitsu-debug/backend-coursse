@@ -11,6 +11,7 @@ const REQUEST_COLUMNS = `
   description,
   priority,
   status,
+  assigned_to,
   created_by,
   created_at,
   updated_at
@@ -113,4 +114,15 @@ export async function findHistory(requestId, db = pool) {
     [requestId]
   );
   return result.rows;
+}
+
+export async function assignRequest(id, assignedTo, db = pool) {
+  const result = await db.query(
+    `UPDATE requests
+     SET assigned_to = $1, status = 'in_progress', updated_at = CURRENT_TIMESTAMP
+     WHERE id = $2
+     RETURNING ${REQUEST_COLUMNS}`,
+    [assignedTo, id]
+  );
+  return result.rows[0] ?? null;
 }

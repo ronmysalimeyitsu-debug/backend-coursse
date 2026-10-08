@@ -60,6 +60,14 @@ export function canChangeStatus(actor) {
 // denial reasons and each maps to a different HTTP answer (403/409/409).
 // The policy names the reason; the SERVICE translates it to an AppError.
 export function canClaimRequest({ actor, request }) {
-  // TODO(FEATURE-801): replace this placeholder with the real rules.
-  return { allowed: false, reason: 'NOT_IMPLEMENTED' };
+  if (actor.role !== 'agent') {
+    return { allowed: false, reason: 'NOT_AGENT' };
+  }
+  if (request.assignedTo) {
+    return { allowed: false, reason: 'ALREADY_ASSIGNED' };
+  }
+  if (request.status !== 'open') {
+    return { allowed: false, reason: 'NOT_OPEN' };
+  }
+  return { allowed: true };
 }

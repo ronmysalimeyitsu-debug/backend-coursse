@@ -1,38 +1,145 @@
-// API tests for FEATURE-801 — INCOMPLETE, on purpose. The behavior matrix
-// of the claim, through HTTP. Convert each stub as the feature grows; use
-// the existing helpers (unique data per run, cleanup of what you create).
-import test from 'node:test';
+// API tests for FEATURE-801 — Claim a request.
+// Behavior matrix of the claim action through HTTP.
+import { test, after } from 'node:test';
+import assert from 'node:assert/strict';
+import request from 'supertest';
+import app from '../src/app.js';
+import { createUser, createRequestAs } from './helpers/test-data.js';
+import { loginAs } from './helpers/test-auth.js';
+import { cleanupCreatedData, closePool } from './helpers/cleanup.js';
 
-test('claim requires authentication', { todo: true }, () => {
-  // POST /requests/:id/claim without token -> 401
+after(async () => {
+  await cleanupCreatedData();
+  await closePool();
 });
 
-test('a requester cannot claim a request', { todo: true }, () => {
-  // as requester -> 403
+test('claim requires authentication', async () => {
+  const response = await request(app).post('/requests/1/claim');
+  assert.equal(response.status, 401);
 });
 
-test('an agent claims an open request: 200, assignedTo from the token, in_progress', { todo: true }, () => {
-  // status 200, body.assignedTo === agent.id, body.status === 'in_progress',
-  // updatedAt advanced.
+test('a requester cannot claim a request', async () => {
+  const requester = await createUser({ name: 'claim-requester' });
+  const token = await loginAs(requester);
+  const created = await createRequestAs(token);
+
+  const response = await request(app)
+    .post(`/requests/${created.id}/claim`)
+    .set('Authorization', `Bearer ${token}`);
+
+  assert.equal(response.status, 403);
 });
 
-test('claiming a nonexistent request answers 404', { todo: true }, () => {
-  // /requests/999999999/claim -> 404 REQUEST_NOT_FOUND
+test('an agent claims an open request: 200, assignedTo from the token, in_progress', async () => {
+  const requester = await createUser({ name: 'claim-owner' });
+  const agent = await createUser({ name: 'claim-agent', role: 'agent' });
+  const reqToken = await loginAs(requester);
+  const agentToken = await loginAs(agent);
+
+  const created = await createRequestAs(reqToken);
+
+  const response = await request(app)
+    .post(`/requests/${created.id}/claim`)
+    .set('Authorization', `Bearer ${agentToken}`);
+
+  assert.equal(response.status, 200);
+  assert.equal(response.body.status, 'in_progress');
+  assert.equal(response.body.assignedTo, agent.id);
+  assert.ok(new Date(response.body.updatedAt) >= new Date(created.updatedAt));
 });
 
-test('a second claim answers 409 REQUEST_ALREADY_ASSIGNED', { todo: true }, () => {
-  // and the error body still carries requestId (class 07 contract).
+test('claiming a nonexistent request answers 404', async () => {
+  const agent = await createUser({ name: 'claim-agent404', role: 'agent' });
+  const agentToken = await loginAs(agent);
+
+  const response = await request(app)
+    .post('/requests/999999999/claim')
+    .set('Authorization', `Bearer ${agentToken}`);
+
+  assert.equal(response.status, 404);
+  assert.equal(response.body.error?.code, 'REQUEST_NOT_FOUND');
 });
 
-test('a terminal request cannot be claimed', { todo: true }, () => {
-  // cancel it first (PATCH), then claim -> 409
+test('a second claim answers 409 REQUEST_ALREADY_ASSIGNED', async () => {
+  const requester = await createUser({ name: 'claim-owner2' });
+  const agent1 = await createUser({ name: 'claim-agent1', role: 'agent' });
+  const agent2 = await createUser({ name: 'claim-agent2', role: 'agent' });
+  const reqToken = await loginAs(requester);
+  const token1 = await loginAs(agent1);
+  const token2 = await loginAs(agent2);
+
+  const created = await createRequestAs(reqToken);
+
+  const first = await request(app)
+    .post(`/requests/${created.id}/claim`)
+    .set('Authorization', `Bearer ${token1}`);
+  assert.equal(first.status, 200);
+
+  const second = await request(app)
+    .post(`/requests/${created.id}/claim`)
+    .set('Authorization', `Bearer ${token2}`);
+  assert.equal(second.status, 409);
+  assert.equal(second.body.error?.code, 'REQUEST_ALREADY_ASSIGNED');
+  assert.ok(typeof second.body.requestId === 'string');
 });
 
-test('assignedTo in the body is rejected as a server-controlled field', { todo: true }, () => {
-  // body { assignedTo: otherId } -> 400 SERVER_CONTROLLED_FIELD
+test('a terminal request cannot be claimed', async () => {
+  const requester = await createUser({ name: 'term-owner' });
+  const agent = await createUser({ name: 'term-agent', role: 'agent' });
+  const reqToken = await loginAs(requester);
+  const agentToken = await loginAs(agent);
+
+  const created = await createRequestAs(reqToken);
+
+  const cancel = await request(app)
+    .patch(`/requests/${created.id}`)
+    .set('Authorization', `Bearer ${agentToken}`)
+    .send({ status: 'cancelled' });
+  assert.equal(cancel.status, 200);
+
+  const response = await request(app)
+    .post(`/requests/${created.id}/claim`)
+    .set('Authorization', `Bearer ${agentToken}`);
+  assert.equal(response.status, 409);
 });
 
-test('the claim leaves a request_claimed event in the history', { todo: true }, () => {
-  // GET /requests/:id/history contains { type: 'request_claimed',
-  // fromStatus: 'open', toStatus: 'in_progress' }.
+test('assignedTo in the body is rejected as a server-controlled field', async () => {
+  const requester = await createUser({ name: 'ctrl-owner' });
+  const agent = await createUser({ name: 'ctrl-agent', role: 'agent' });
+  const reqToken = await loginAs(requester);
+  const agentToken = await loginAs(agent);
+
+  const created = await createRequestAs(reqToken);
+
+  const response = await request(app)
+    .post(`/requests/${created.id}/claim`)
+    .set('Authorization', `Bearer ${agentToken}`)
+    .send({ assignedTo: agent.id });
+
+  assert.equal(response.status, 400);
+  assert.equal(response.body.error?.code, 'SERVER_CONTROLLED_FIELD');
+});
+
+test('the claim leaves a request_claimed event in the history', async () => {
+  const requester = await createUser({ name: 'hist-owner' });
+  const agent = await createUser({ name: 'hist-agent', role: 'agent' });
+  const reqToken = await loginAs(requester);
+  const agentToken = await loginAs(agent);
+
+  const created = await createRequestAs(reqToken);
+
+  const claim = await request(app)
+    .post(`/requests/${created.id}/claim`)
+    .set('Authorization', `Bearer ${agentToken}`);
+  assert.equal(claim.status, 200);
+
+  const history = await request(app)
+    .get(`/requests/${created.id}/history`)
+    .set('Authorization', `Bearer ${reqToken}`);
+  assert.equal(history.status, 200);
+
+  const claimEvent = history.body.find((e) => e.type === 'request_claimed');
+  assert.ok(claimEvent);
+  assert.equal(claimEvent.fromStatus, 'open');
+  assert.equal(claimEvent.toStatus, 'in_progress');
 });

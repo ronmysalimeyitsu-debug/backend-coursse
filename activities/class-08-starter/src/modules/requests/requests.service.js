@@ -24,13 +24,15 @@ import {
   canChangeStatus
 } from './request.policy.js';
 import { AppError } from '../../app-error.js';
+import { assignRequest } from './requests.store.js';
+import { canClaimRequest } from './request.policy.js';
 
 const PRIORITIES = ['low', 'medium', 'high'];
 const UPDATABLE_FIELDS = ['title', 'description', 'priority', 'status'];
 
 // Fields the server controls on requests. Sending them is a contract
 // violation, answered explicitly — never silently ignored.
-const SERVER_CONTROLLED_FIELDS = ['id', 'createdBy', 'createdAt', 'updatedAt', 'changedBy'];
+const SERVER_CONTROLLED_FIELDS = ['id', 'createdBy', 'createdAt', 'updatedAt', 'changedBy', 'assignedTo'];
 
 // A foreign resource answers exactly like a missing one: same status,
 // same code, same message. A different answer would confirm it exists.
@@ -219,6 +221,51 @@ export async function patchRequest(actor, id, body) {
         changedBy: actor.userId
       }, client);
     }
+    return updated;
+  });
+
+  return mapRequestRow(row);
+}
+
+export async function claimRequest(actor, id, body) {
+  rejectServerControlledFields(body, ['assignedTo']);
+
+  const row = await withTransaction(async (client) => {
+    const current = await findById(id, client);
+    if (!current) throw notFound(id);
+
+    const request = mapRequestRow(current);
+    const decision = canClaimRequest({ actor, request });
+
+    if (!decision.allowed) {
+      if (decision.reason === 'NOT_AGENT') {
+        throw forbidden('Only agents can claim requests.');
+      }
+      if (decision.reason === 'ALREADY_ASSIGNED') {
+        throw new AppError('domain', 'REQUEST_ALREADY_ASSIGNED',
+          `Request ${id} is already assigned.`);
+      }
+      if (decision.reason === 'NOT_OPEN') {
+        if (isTerminal(request.status)) {
+          throw new AppError('domain', 'REQUEST_IN_TERMINAL_STATUS',
+            `Request ${id} is ${request.status} and can no longer be modified.`);
+        }
+        throw new AppError('domain', 'INVALID_STATUS_TRANSITION',
+          `A request cannot move from ${request.status} to in_progress.`);
+      }
+      throw new AppError('domain', 'CLAIM_FORBIDDEN', 'Cannot claim request.');
+    }
+
+    const updated = await assignRequest(id, actor.userId, client);
+
+    await insertHistoryEvent({
+      requestId: id,
+      type: 'request_claimed',
+      fromStatus: current.status,
+      toStatus: 'in_progress',
+      changedBy: actor.userId
+    }, client);
+
     return updated;
   });
 

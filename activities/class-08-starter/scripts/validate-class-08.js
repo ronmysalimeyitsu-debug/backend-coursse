@@ -147,8 +147,11 @@ const CHECKS = [
 
   ['Baseline', 'Existing tests pass', async () => {
     try {
+      const bash = process.platform === 'win32'
+        ? (process.env.BASH_PATH || 'C:\\Program Files\\Git\\bin\\bash.exe')
+        : '/bin/bash';
       execSync(`node --test --test-concurrency=1 'test/*.test.js'`, {
-        cwd: ROOT, stdio: 'pipe', timeout: 180000, shell: '/bin/bash'
+        cwd: ROOT, stdio: 'pipe', timeout: 180000, shell: bash
       });
       return null;
     } catch (error) {

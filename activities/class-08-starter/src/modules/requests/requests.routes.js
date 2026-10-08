@@ -11,6 +11,7 @@ import {
   getHistory
 } from './requests.service.js';
 import { parseIdParam } from '../../http/parse-id.js';
+import { claimRequest } from './requests.service.js';
 
 const router = express.Router();
 
@@ -29,10 +30,10 @@ router.get('/:id/history', async (req, res) => {
   res.status(200).json(await getHistory(req.auth, id));
 });
 
-// TODO(FEATURE-801): POST /:id/claim — the new business action. Before
-// wiring it here, decide WHERE each responsibility will live. The route's
-// job is small: validate the id, read the authenticated actor, call the
-// service, answer 200 with the result.
+router.post('/:id/claim', async (req, res) => {
+  const id = parseIdParam(req.params.id);
+  res.status(200).json(await claimRequest(req.auth, id, req.body));
+});
 
 router.post('/', async (req, res) => {
   res.status(201).json(await createRequest(req.auth, req.body));
