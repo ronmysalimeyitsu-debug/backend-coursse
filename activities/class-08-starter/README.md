@@ -61,12 +61,21 @@ clase peleando con la herramienta.
 * [ ] **Baseline** — doctor 7/7 + migración 005 aplicada + suite verde
 * [ ] **Mapa** — responsibility-map.md del handler cargado
 * [ ] **Refactor** — historial separado, contrato intacto, commit
+* [ ] **Cohesión y dependencias** — razones de cambio clasificadas, flechas sin ciclos
 * [ ] **Contrato claim** — matriz entendida, decisión de assignedTo clara
 * [ ] **Policy** — regla pura + pruebas sin HTTP
 * [ ] **Service + store** — coordinación y transacción con historial
 * [ ] **Route** — POST /:id/claim delgado
 * [ ] **Pruebas API** — matriz completa en verde
 * [ ] **Validación** — validate:class-08 → PASSED
+
+## Lectura: refactor vs feature
+
+Antes de tocar el handler, lee [`activities/class-08/refactor-vs-feature.md`](activities/class-08/refactor-vs-feature.md). Resuelve sus tres preguntas y sigue el laboratorio de ocho pasos para separar `GET /requests/:id/history`, ejecutando `npm test` después de cada paso. Usa `responsibility-map.md` para ubicar cada responsabilidad y registra los resultados en `refactor-log.md` antes de iniciar FEATURE-801.
+
+## Lecturas y laboratorios: cohesión y dependencias
+
+Completa [`activities/class-08/cohesion-coupling-dependencies.md`](activities/class-08/cohesion-coupling-dependencies.md): incluye las dos lecturas, las respuestas de comprensión, los 8 casos del laboratorio de cohesión/acoplamiento y el mapa de dependencias de 5 capas aplicado a los imports reales de `requests`.
 
 > El taller es **autocontenido**: si un bloque no se completa en clase, se
 > completa en casa — mismo starter, mismos validadores, mismas láminas

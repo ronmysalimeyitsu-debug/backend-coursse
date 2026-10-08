@@ -9,13 +9,15 @@ import {
   findById,
   insertRequest,
   updateRequest,
-  insertHistoryEvent
+  insertHistoryEvent,
+  findHistory,
 } from './requests.store.js';
-import { mapRequestRow } from './request.mapper.js';
+import { mapRequestRow, mapHistoryEventRow } from './request.mapper.js';
 import { STATUSES, isValidStatus, isTerminal, canTransition } from './request-status.js';
 import {
   canListAllRequests,
   canViewRequest,
+  canViewHistory,
   canCreateRequest,
   canEditContent,
   canChangePriority,
@@ -124,6 +126,17 @@ export async function createRequest(actor, input) {
   });
 
   return mapRequestRow(row);
+}
+
+export async function getHistory(actor, id) {
+  const current = await findById(id);
+  if (!current) throw notFound(id);
+
+  const request = mapRequestRow(current);
+  if (!canViewHistory(actor, request)) throw notFound(id);
+
+  const rows = await findHistory(id);
+  return rows.map(mapHistoryEventRow);
 }
 
 export async function patchRequest(actor, id, body) {
