@@ -68,6 +68,7 @@ clase peleando con la herramienta.
 * [ ] **Route** — POST /:id/claim delgado
 * [ ] **Pruebas API** — matriz completa en verde
 * [ ] **Validación** — validate:class-08 → PASSED
+* [ ] **Transacción** — rollback probado si falla el evento de historial
 
 ## Lectura: refactor vs feature
 
@@ -76,6 +77,14 @@ Antes de tocar el handler, lee [`activities/class-08/refactor-vs-feature.md`](ac
 ## Lecturas y laboratorios: cohesión y dependencias
 
 Completa [`activities/class-08/cohesion-coupling-dependencies.md`](activities/class-08/cohesion-coupling-dependencies.md): incluye las dos lecturas, las respuestas de comprensión, los 8 casos del laboratorio de cohesión/acoplamiento y el mapa de dependencias de 5 capas aplicado a los imports reales de `requests`.
+
+## Migración 005: datos vivos
+
+Lee [`activities/class-08/migration-005-decisions-and-lab.md`](activities/class-08/migration-005-decisions-and-lab.md), clasifica las 8 propuestas, distingue la garantía de la FK de la regla de policy y ejecuta el checkpoint SQL de solo lectura para inspeccionar el seed.
+
+## Transacciones e historial
+
+Lee [`activities/class-08/transactions-and-history.md`](activities/class-08/transactions-and-history.md). El validador ejecuta un rollback real ante una FK inválida y confirma que no quede asignación parcial ni evento huérfano.
 
 > El taller es **autocontenido**: si un bloque no se completa en clase, se
 > completa en casa — mismo starter, mismos validadores, mismas láminas
@@ -112,7 +121,7 @@ está en TU GitHub no existe para la evaluación.
 | `npm run db:migrate` / `db:seed` | Esquema y datos (repetibles) |
 | `npm test` | Suite completa — tu red de seguridad para refactorizar |
 | `npm run test:policy` | Solo las pruebas de la policy (sin base, milisegundos) |
-| `npm run validate:class-08` | Validador final (12 checks, incluye fronteras) |
+| `npm run validate:class-08` | Validador final (13 checks, incluye rollback y fronteras) |
 
 ## Los archivos del ticket
 

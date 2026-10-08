@@ -18,6 +18,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import app from '../src/app.js';
 import { pool } from '../src/database/pool.js';
+import { withTransaction } from '../src/database/transaction.js';
+import { assignRequest, insertHistoryEvent } from '../src/modules/requests/requests.store.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const TAG = `class08-validation-${Date.now()}-${crypto.randomBytes(3).toString('hex')}`;
@@ -274,6 +276,57 @@ const CHECKS = [
     return null;
   }],
 
+  ['Claim request', 'Transaction rolls back on history FK failure', async () => {
+    const target = await createRequestAs(ownerToken);
+    const service = readFileSync(path.join(ROOT, 'src/modules/requests/requests.service.js'), 'utf8');
+    const passesClientToAssignment = /assignRequest\(\s*id,\s*actor\.userId,\s*client\s*\)/.test(service);
+    const passesClientToHistory = /type:\s*'request_claimed'[\s\S]*?changedBy:\s*actor\.userId\s*\}\s*,\s*client\s*\)/.test(service);
+    if (!passesClientToAssignment || !passesClientToHistory) {
+      return detail('claim passes the transaction client to UPDATE and history INSERT',
+        `assignRequest client=${passesClientToAssignment}; insertHistoryEvent client=${passesClientToHistory}`,
+        ['every write in the claim unit must use the client from withTransaction']);
+    }
+
+    let failure;
+    try {
+      await withTransaction(async (client) => {
+        await assignRequest(target.id, agent.id, client);
+        await insertHistoryEvent({
+          requestId: target.id,
+          type: 'request_claimed',
+          fromStatus: 'open',
+          toStatus: 'in_progress',
+          changedBy: crypto.randomUUID()
+        }, client);
+      });
+    } catch (error) {
+      failure = error;
+    }
+
+    if (failure?.code !== '23503') {
+      return detail('history INSERT fails with a foreign-key violation (23503)',
+        failure?.code ?? 'the simulated transaction unexpectedly committed',
+        ['use a syntactically valid UUID that does not exist in users']);
+    }
+
+    const persisted = await realQuery(
+      `SELECT r.status, r.assigned_to,
+              count(h.id) FILTER (WHERE h.type = 'request_claimed')::int AS claim_events
+       FROM requests AS r
+       LEFT JOIN request_history AS h ON h.request_id = r.id
+       WHERE r.id = $1
+       GROUP BY r.id`,
+      [target.id]
+    );
+    const state = persisted.rows[0];
+    if (state?.status !== 'open' || state.assigned_to !== null || state.claim_events !== 0) {
+      return detail('rollback leaves open, unassigned request with no claim event',
+        JSON.stringify(state ?? null),
+        ['the UPDATE and INSERT must share one transaction client']);
+    }
+    return null;
+  }],
+
   ['Boundaries', 'Routes contain no SQL', async () => {
     const source = readFileSync(path.join(ROOT, 'src/modules/requests/requests.routes.js'), 'utf8');
     const offenders = [];
@@ -348,7 +401,7 @@ try {
       print(section);
       currentSection = section;
     }
-    const label = `[${String(index).padStart(2, '0')}/12] ${name} `;
+    const label = `[${String(index).padStart(2, '0')}/${CHECKS.length}] ${name} `;
     print(`${label}${'.'.repeat(Math.max(2, 46 - label.length))} ${failure ? 'FAIL' : 'PASS'}`);
   }
 
@@ -370,6 +423,6 @@ try {
   if (crashed) print(`\nValidator error: ${crashed.message}`);
 
   const passed = results.filter(([, , failure]) => !failure).length;
-  print(`\nFINAL RESULT: ${passed === 12 && !crashed ? 'PASSED' : `FAILED (${passed}/12)`}`);
-  process.exit(passed === 12 && !crashed ? 0 : 1);
+  print(`\nFINAL RESULT: ${passed === CHECKS.length && !crashed ? 'PASSED' : `FAILED (${passed}/${CHECKS.length})`}`);
+  process.exit(passed === CHECKS.length && !crashed ? 0 : 1);
 }

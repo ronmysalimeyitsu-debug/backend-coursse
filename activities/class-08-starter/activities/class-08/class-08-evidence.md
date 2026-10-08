@@ -7,7 +7,7 @@ archivo reúne desde ya la evidencia que ese checkpoint pedirá.
 ## Evidencia mínima del tema 8
 
 * Baseline anterior al refactor (commit `class-08-baseline`): `5429366`
-* Commits separados de refactor y feature (`class-08-refactor`, `class-08-feature`): `class-08-refactor` está registrado; `class-08-feature` se crea con este cambio.
+* Commits separados de refactor y feature (`class-08-refactor`, `class-08-feature`): `67a7a9d` y `12ae761`.
 * `responsibility-map.md` completo: sí
 * Separación route/service/store/policy:
   - `routes`: extracción y validación de parámetros HTTP (`req.params.id`, `req.auth`, `req.body`), respuesta JSON. Sin SQL ni lógica de negocio.
@@ -21,7 +21,8 @@ archivo reúne desde ya la evidencia que ese checkpoint pedirá.
   - `test/request-policy.test.js`: 5 pruebas unitarias puras en verde (5 pass)
   - `test/requests-claim.test.js`: 8 pruebas de integración HTTP en verde (8 pass)
   - Total suite: 52 pass, 0 fail, 0 todo
-* Resultado del validador: FINAL RESULT: PASSED (12/12) registrado en `validation-evidence.txt`
+* Rollback de historial ante FK inválida: comprobado por el check 11 del validador; estado abierto/no asignado y cero eventos de claim.
+* Resultado del validador: FINAL RESULT: PASSED (13/13) registrado en `validation-evidence.txt`
 
 ## Explicación integradora (bórrala de memoria: escríbela con el proyecto abierto)
 

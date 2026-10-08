@@ -1,22 +1,23 @@
 CLASS 08 ARCHITECTURE VALIDATION
 
 Baseline
-[01/12] Previous behavior preserved .......... PASS
-[02/12] Existing tests pass .................. PASS
+[01/13] Previous behavior preserved .......... PASS
+[02/13] Existing tests pass .................. PASS
 
 Claim request
-[03/12] Authentication required .............. PASS
-[04/12] Requester cannot claim ............... PASS
-[05/12] Agent can claim open request ......... PASS
-[06/12] Agent id comes from token ............ PASS
-[07/12] Request becomes in_progress .......... PASS
-[08/12] Second claim returns conflict ........ PASS
-[09/12] Terminal request cannot be claimed ... PASS
-[10/12] History event is created ............. PASS
+[03/13] Authentication required .............. PASS
+[04/13] Requester cannot claim ............... PASS
+[05/13] Agent can claim open request ......... PASS
+[06/13] Agent id comes from token ............ PASS
+[07/13] Request becomes in_progress .......... PASS
+[08/13] Second claim returns conflict ........ PASS
+[09/13] Terminal request cannot be claimed ... PASS
+[10/13] History event is created ............. PASS
+[11/13] Transaction rolls back on history FK failure .. PASS
 
 Boundaries
-[11/12] Routes contain no SQL ................ PASS
-[12/12] Service does not depend on Express ... PASS
+[12/13] Routes contain no SQL ................ PASS
+[13/13] Service does not depend on Express ... PASS
 
 Cleanup
 Temporary validation data removed successfully.
