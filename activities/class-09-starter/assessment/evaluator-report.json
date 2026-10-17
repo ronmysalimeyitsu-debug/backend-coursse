@@ -1,1 +1,74 @@
-{ "placeholder": "REPLACE this file with BLOQUE 2 (only the JSON) from your evaluation" }
+{
+	"protocolVersion": "ITSU-KNOWLEDGE-09-1.0",
+	"rubricVersion": "BACKEND-01-08-K1",
+	"evaluationId": "K09-ronmysalimey-itu-d0b72fd",
+	"studentId": "ronmysalimey-itu",
+	"commit": "d0b72fd",
+	"variant": "D",
+	"status": "PARTIAL",
+	"action": "VERIFY",
+	"questions": [
+		{
+			"questionId": "Q1",
+			"topics": ["HTTP", "request flow", "request history"],
+			"levels": {"conceptual": 3, "grounding": 3, "reasoning": 3, "verification": 3},
+			"evidence": ["Identificó GET /requests/:id/history, getHistory(actor, id), findHistory(requestId) y test/requests-history.test.js.", "Rectificó 403 por 404 REQUEST_NOT_FOUND uniforme tras revisar la prueba de solicitud ajena."],
+			"strength": "Conectó ruta, servicio, store y prueba; distinguió su predicción inicial de los hallazgos y rectificó el código de respuesta con evidencia.",
+			"gap": "El orden de middlewares y el punto exacto donde termina la frontera HTTP quedaron parcialmente sustentados.",
+			"rectification": "Cambió la respuesta esperada para solicitud ajena de 403 a 404 uniforme, explicando la mitigación de enumeración.",
+			"confidence": "medium"
+		},
+		{
+			"questionId": "Q2",
+			"topics": ["transacciones", "atomicidad", "request_history"],
+			"levels": {"conceptual": 3, "grounding": 3, "reasoning": 3, "verification": 2},
+			"evidence": ["Describió que el estado podría cambiar sin quedar registrado en request_history.", "Señaló patchRequest en requests.service.js y src/database/transaction.js; propuso comprobar que estado e historial permanezcan intactos tras el fallo."],
+			"strength": "Relacionó atomicidad y trazabilidad, rechazó la afirmación sobre HTTP stateless y explicó la función de commit y rollback.",
+			"gap": "Propuso verificar el estado y la ausencia de evento, pero no especificó cómo inducir el fallo ni interpretar un resultado ejecutado.",
+			"rectification": "",
+			"confidence": "medium"
+		},
+		{
+			"questionId": "Q3",
+			"topics": ["autenticación", "autorización", "IDOR", "enumeración"],
+			"levels": {"conceptual": 4, "grounding": 2, "reasoning": 4, "verification": 3},
+			"evidence": ["Explicó que antes de confiar en claims hay que verificar firma y vigencia temporal del token.", "Citó request.policy.js y propuso pruebas GET y PATCH de solicitudes ajenas con 404.", "Afirmó que authenticate.js está en src/middlewares/, mientras la tarjeta lista src/middleware/authenticate.js; la discrepancia quedó sin resolver."],
+			"strength": "Diferenció autenticación de autorización, explicó por qué no confiar en userId enviado por el cliente y justificó el 404 uniforme contra enumeración.",
+			"gap": "La ruta del middleware contradice la estructura de la tarjeta y requiere comprobación oral.",
+			"rectification": "",
+			"confidence": "medium"
+		},
+		{
+			"questionId": "Q4",
+			"topics": ["diagnóstico", "disponibilidad de base de datos", "health y readiness"],
+			"levels": {"conceptual": 2, "grounding": 1, "reasoning": 2, "verification": 2},
+			"evidence": ["Interpretó ECONNREFUSED, HTTP 503, /ready 503 y /health 200 como indicios de indisponibilidad de la base.", "Propuso pg_isready o nc -zv al host y puerto, esperando un fallo de conexión."],
+			"strength": "Separó el síntoma de una hipótesis de entorno y propuso una comprobación de conectividad.",
+			"gap": "El diagnóstico no se conectó a un comando del repositorio ni avanzó a la interpretación de evidencia adicional o una prueba de regresión.",
+			"rectification": "",
+			"confidence": "low"
+		},
+		{
+			"questionId": "Q5",
+			"topics": ["historial", "cambio de prioridad"],
+			"levels": {"conceptual": "X", "grounding": "X", "reasoning": "X", "verification": "X"},
+			"evidence": [],
+			"strength": "",
+			"gap": "No evaluada: se agotó el tiempo antes de presentarla.",
+			"rectification": "",
+			"confidence": "low"
+		}
+	],
+	"priorityGaps": ["Resolver la discrepancia sobre la ruta real del middleware de autenticación.", "Profundizar el diagnóstico de LOG-04 con evidencia específica del repositorio y una regresión mínima.", "Q5 no fue evaluada por límite de tiempo."],
+	"strengths": ["Conectó el recorrido del endpoint de historial con rutas, servicio, store y una prueba concreta.", "Explicó atomicidad y la mitigación de IDOR mediante respuestas 404 uniformes.", "Rectificó una respuesta de contrato apoyándose en evidencia de prueba."],
+	"recommendedStudyActions": ["Contrastar las rutas citadas con la estructura real y seguir authenticate desde la aplicación hasta la validación del JWT.", "Practicar diagnósticos separando síntoma, hipótesis y causa; interpretar /health, /ready y resultados de pruebas.", "Completar el análisis de CHANGE-04: contrato, permisos, persistencia, compatibilidad y pruebas para cambios de prioridad."],
+	"reviewSignals": ["EVIDENCE_CONTRADICTION", "GENERIC_WITHOUT_REPOSITORY_EVIDENCE", "TRANSCRIPT_INCOMPLETE"],
+	"teacherReview": {
+		"priority": "medium",
+		"oralVerificationRecommended": true,
+		"questions": ["¿Cuál es la ruta exacta del middleware de autenticación y dónde se verifica el JWT?", "En LOG-04, ¿qué comando del repositorio distinguiría indisponibilidad de la base de un defecto del código?"],
+		"minimumExpectedAnswers": ["Resolver la discrepancia entre src/middleware/authenticate.js, indicada por la tarjeta, y src/middlewares/authenticate.js, indicada por el estudiante; aportar el archivo y la función reales.", "Relacionar ECONNREFUSED y /ready 503 con la indisponibilidad de la base, distinguirlo de /health 200 y citar una prueba o comando del repositorio pertinente."],
+		"reason": "La ruta del middleware quedó en contradicción con la tarjeta; LOG-04 se verificó solo parcialmente y Q5 no se evaluó por tiempo. El transcript referencia el prompt fuente, pero no lo reproduce completo.",
+		"digest": "Q1-Q2 demostraron buen razonamiento sobre recorrido, atomicidad e IDOR; hubo rectificación del 403 a 404. Verificar la ruta del middleware y profundizar LOG-04. Q5 no se evaluó por tiempo."
+	}
+}

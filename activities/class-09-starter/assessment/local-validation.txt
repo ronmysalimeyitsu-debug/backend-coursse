@@ -1,0 +1,17 @@
+ASSESSMENT REPORT VALIDATION — ITSU-KNOWLEDGE-09-1.0
+
+Assessment protocol ................ PASS
+Evaluation ID ...................... PASS
+Five questions ..................... PASS
+Score values ....................... PASS
+JSON schema ........................ PASS
+Conversation transcript ............ PASS
+Teacher digest length .............. PASS
+
+RAW SCORE: 43/80  (4 dimension(s) marked X — not counted)
+NORMALIZED SCORE: INCOMPLETE (X dimensions present — no definitive percentage)
+ACTION: VERIFY
+FINAL RESULT: VALID_INCOMPLETE
+
+This validator checks format and arithmetic. It does not replace
+pedagogical judgement: the teacher reviews the report and may verify orally.
