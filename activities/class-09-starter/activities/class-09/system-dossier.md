@@ -1,96 +1,136 @@
 # System dossier
 
-Un solo expediente para todo el análisis del taller. Regla de oro: cada
-afirmación cita su evidencia (archivo y función, prueba, tabla o salida de
-comando) o se declara como duda en la sección 9.
+Un solo expediente para todo el análisis del taller. Regla de oro: cada afirmación cita su evidencia (archivo y función, prueba, tabla o salida de comando) o se declara como duda en la sección 9.
 
 ## 1. How the system starts
 
 - **Comando inicial:** `npm run dev` o `npm start` definido en `package.json`.
 - **Archivo que ejecuta Node:** `src/server.js`.
-- **Qué construye la aplicación:** Importa la instancia de Express desde `src/app.js`, la cual configura de manera secuencial los middlewares globales (`corsPolicy` para preflights y `express.json()` para parseo de cuerpos), monta las rutas de autenticación (`/auth`) y protege el módulo de solicitudes (`/requests`) aplicando el middleware `authenticate` de forma estricta.
+- **Qué construye la aplicación:** Importa la instancia de Express desde `src/app.js`, la cual configura de manera secuencial los middlewares globales (`corsPolicy` para preflights, `requestId`, `requestLogger` y `express.json()` para parseo de cuerpos), monta las rutas de salud/readiness (`healthRoutes`), las rutas de autenticación (`/auth`) y protege el módulo de solicitudes (`/requests`) aplicando el middleware `authenticate` de forma estricta.
 - **Qué queda escuchando:** El proceso queda escuchando en el puerto configurado (`process.env.PORT ?? 3000`) a través de `app.listen` en `src/server.js`.
 
 ## 2. Main components
 
 | Componente | Archivo o recurso | Responsabilidad | Evidencia | Duda |
 | --- | --- | --- | --- | --- |
-| Punto de entrada | `src/server.js` | Inicia el proceso del servidor HTTP | `app.listen` en `src/server.js` | — |
-| Construcción de la app | `src/app.js` | Configura middlewares y orden de ejecución | `app.use` secuencial | — |
-| Router principal | `src/app.js` | Ensambla los prefijos `/auth` y `/requests` | Declaración de rutas en `app.js` | — |
-| Módulos | `src/modules/requests/requests.routes.js` | Define los endpoints del dominio de solicitudes | Enrutador HTTP expreso | — |
-| Middleware global | `src/middleware/cors.js` | Maneja las políticas de CORS y preflights | `corsPolicy` middleware | — |
-| Autenticación | `src/middleware/authenticate.js` | Valida el token JWT y construye `req.auth` | `jwtVerify` / prueba unitaria 401 | — |
-| Autorización (policies) | `src/modules/requests/request.policy.js` | Reglas puras de control de acceso y visibilidad | Funciones booleanas de permisos | — |
-| Services | `src/modules/requests/requests.service.js` | Coordina la lógica de negocio y casos de uso | Lógica desacoplada de req/res | — |
-| Stores / acceso a datos | `src/modules/requests/requests.store.js` | Ejecuta consultas SQL parametrizadas | Consultas SQL al pool | — |
-| Conexión PostgreSQL | `src/database/pool.js` | Administra el pool único de conexiones | Instancia de `new Pool` | — |
-| Manejo de errores | `src/middleware/error-handler.js` | Centraliza y formatea las respuestas de fallo | Middleware interceptor final | — |
-| Logging | `src/middleware/request-logger.js` | Registra el ciclo de vida de las peticiones | Suscripción al evento `finish` | — |
-| Health / readiness | `src/routes/health.routes.js` | Reporta el estado de salud del sistema | Endpoints `/health` | — |
-| Pruebas | `test/requests.test.js` | Valida el comportamiento automatizado | Ejecución de `npm test` en verde | — |
-| Scripts operativos | `scripts/migrate.js` | Automatiza migraciones y siembra de base de datos | Scripts en Node dedicados | — |
-| Dependencias externas | `package.json` | Lista librerías de terceros (express, pg, jsonwebtoken) | Definición en `dependencies` | — |
+| **Punto de entrada** | `src/server.js` | Inicia el proceso del servidor HTTP en el puerto designado | `app.listen` en `src/server.js` | — |
+| **Construcción de la app** | `src/app.js` | Configura la secuencia estricta de middlewares y montajes | `app.use` ordenados en `src/app.js` | — |
+| **Router principal** | `src/app.js` | Ensambla los prefijos `/auth` y `/requests` | Declaración de rutas en `app.js` | — |
+| **Módulos** | `src/modules/requests/requests.routes.js` | Define los endpoints del dominio de solicitudes | Enrutador HTTP expreso | — |
+| **Middleware global** | `src/middleware/cors.js` | Maneja las políticas de CORS y respuestas a preflights | `corsPolicy` middleware | — |
+| **Identificación de traza** | `src/middleware/request-id.js` | Genera o propaga un `requestId` único por petición | Inserta `req.requestId` | — |
+| **Autenticación** | `src/middleware/authenticate.js` | Valida el token JWT y construye `req.auth` | `jwtVerify` / prueba unitaria 401 | — |
+| **Autorización (policies)** | `src/modules/requests/request.policy.js` | Reglas puras de control de acceso y visibilidad | Funciones booleanas `canViewRequest`, etc. | — |
+| **Services** | `src/modules/requests/requests.service.js` | Coordina la lógica de negocio y casos de uso (unidades de trabajo) | Lógica desacoplada de req/res | — |
+| **Stores / acceso a datos** | `src/modules/requests/requests.store.js` | Ejecuta consultas SQL parametrizadas | Consultas SQL al pool | — |
+| **Conexión PostgreSQL** | `src/database/pool.js` | Administra el pool único de conexiones a la base de datos | Instancia de `new Pool` | — |
+| **Manejo de errores** | `src/middleware/error-handler.js` | Centraliza y formatea las respuestas de fallo | Middleware interceptor final | — |
+| **Logging** | `src/middleware/request-logger.js` | Registra el ciclo de vida de las peticiones en JSON estructurado | Suscripción al evento `finish` | — |
+| **Health / readiness** | `src/routes/health.routes.js` | Reporta el estado de salud y disponibilidad operativa | Endpoints `/health` y `/ready` | — |
+| **Pruebas de detalle** | `test/request-detail.test.js` | Valida el comportamiento de visibilidad, IDOR y esquema | Ejecución `npm run test:detail` en verde (6/6) | — |
+| **Scripts operativos** | `scripts/migrate.js` | Automatiza migraciones y siembra de base de datos | Scripts en Node dedicados | — |
+| **Dependencias externas** | `package.json` | Lista librerías de terceros (`express`, `pg`, `jsonwebtoken`) | Definición en `dependencies` | — |
 
 ## 3. Request trace
 
 Recorrido completo de `GET /requests/:id` — en orden, con archivo y función en cada paso:
 
 1. **Router:** `src/modules/requests/requests.routes.js` en el endpoint `router.get('/:id', ...)`.
-2. **Middlewares que atraviesa:** `corsPolicy` (en `app.js`) $\rightarrow$ `requestId` $\rightarrow$ `requestLogger` $\rightarrow$ `express.json()` $\rightarrow$ `authenticate` (en `app.js`)[cite: 8].
-3. **Dónde se valida el parámetro `id`:** `src/http/parse-id.js` asegurando que sea un entero válido (caso contrario lanza error 400).
-4. **Dónde nace la identidad autenticada:** `src/middleware/authenticate.js` mediante la función `jwtVerify` que valida la firma criptográfica y construye `req.auth = { userId, role }`[cite: 12, 13].
-5. **Policy consultada (¿se consulta?):** Sí, se consulta `src/modules/requests/request.policy.js` (ej. funciones de ownership y visibilidad por rol).
-6. **Service:** `src/modules/requests/requests.service.js` coordinando la búsqueda del caso de uso.
-7. **Store y query:** `src/modules/requests/requests.store.js` ejecutando la consulta `findById` con SQL parametrizado (`$1`)[cite: 14].
-8. **Transformación fila → JSON:** `src/modules/requests/request.mapper.js` (`mapRequestRow`) traduciendo de formato `snake_case` de la base de datos al contrato público de 9 claves[cite: 11, 14].
-9. **Respuesta y manejo de errores:** La ruta responde con `res.json(...)`; si ocurre una excepción de dominio, es interceptada y traducida por `src/middleware/error-handler.js` adjuntando el `requestId`.
-10. **Pruebas existentes que cubren este recorrido:** `test/request-detail.test.js`.
+2. **Middlewares que atraviesa (en `src/app.js`):**
+   - `corsPolicy`: Procesa políticas de origen cross-domain.
+   - `requestId`: Asigna un id de traza único a la petición (`req.requestId`).
+   - `requestLogger`: Se suscribe al evento `finish` de la respuesta para emitir el log JSON.
+   - `express.json()`: Parsea el cuerpo en JSON de ser necesario.
+   - `authenticate`: Extrae la cabecera `Authorization: Bearer <token>`, valida la firma y emite `req.auth`.
+3. **Dónde se valida el parámetro `id`:** `src/http/parse-id.js` asegurando que sea un entero válido (caso contrario lanza error `contract` `400`).
+4. **Dónde nace la identidad autenticada:** `src/middleware/authenticate.js` mediante la función `jwtVerify` que valida la firma criptográfica y construye `req.auth = { userId, role }`.
+5. **Policy consultada:** `src/modules/requests/request.policy.js` invocando `canViewRequest(actor, request)` para verificar la relación de propiedad o rol de agente.
+6. **Service:** `src/modules/requests/requests.service.js` en la función `getRequest(actor, id)`.
+7. **Store y query:** `src/modules/requests/requests.store.js` ejecutando la consulta `findById(id)` con SQL parametrizado (`$1`).
+8. **Transformación fila → JSON:** `src/modules/requests/request.mapper.js` (`mapRequestRow`) traduciendo de formato `snake_case` de la base de datos al contrato público.
+9. **Respuesta y manejo de errores:** La ruta responde con `res.json(...)`. Si el recurso no existe o el usuario no tiene permisos (`!canViewRequest`), el servicio lanza `notFound(id)` (`AppError('resource', 'REQUEST_NOT_FOUND', ...)`), el cual es capturado por `src/middleware/error-handler.js` devolviendo `404 Not Found` y adjuntando el `requestId`.
+10. **Evidencia real de ejecución (Salida de `npm run test:detail`):**
+    ```json
+    {"timestamp":"2026-10-19T20:55:47.781Z","level":"info","event":"request_completed","requestId":"req_180e4fb4-b1cc-457b-9d3a-bcf3dc2e52cb","method":"GET","path":"/requests/810","status":404,"durationMs":132,"userId":"397ad4b3-988d-4b6c-b366-06735bd27870","errorCode":"REQUEST_NOT_FOUND"}
+    ✔ a different requester receives the same 404 as a missing request (2047.5181ms)
+    ```
 
 ## 4. Database inventory
 
-- **Tablas principales:** `users`, `requests`, `request_history` (más esquema de ledger).
+- **Tablas principales:** `users`, `requests`, `request_history` (más esquema de ledger/transacciones).
 - **Migraciones:** Versionadas en `database/migrations/` desde `001_create_users.sql` hasta `005_add_request_assignment.sql`.
 - **Siembra de datos (Seed):** Automatizada mediante `scripts/seed.js`, estableciendo requesters y agentes de prueba.
 
 ## 5. Authentication and authorization
 
-- **Dónde se verifica el JWT:** En `src/middleware/authenticate.js` utilizando la función `jwtVerify(token, secret)`[cite: 12, 13]. Decodificar sin verificar no es seguro; la firma garantiza que los claims son confiables[cite: 12, 13].
-- **Qué contiene `req.auth`:** Se construye con `{ userId: payload.sub, role: payload.role }`[cite: 12, 13].
+- **Dónde se verifica el JWT:** En `src/middleware/authenticate.js` utilizando la función `jwtVerify(token, secret)`. Decodificar sin verificar no es seguro; la firma garantiza que los claims son confiables.
+- **Qué contiene `req.auth`:** Se construye con `{ userId: payload.sub, role: payload.role }`.
 - **Dónde viven las reglas de permiso:** En `src/modules/requests/request.policy.js`, evaluando reglas puras de rol y propiedad (ownership).
-- **Ejemplo y prueba:** Las reglas se validan en pruebas unitarias como `test/request-policy.test.js`[cite: 7].
+- **Estrategia anti-enumeración (IDOR):** Implementada en `requests.service.js` dentro de `getRequest`: si un usuario no es el propietario ni un agente autorizado (`!canViewRequest(actor, request)`), el sistema responde exactamente igual que con un ID inexistente: `404 Not Found` con código `REQUEST_NOT_FOUND`.
+- **Ejemplo y prueba:** `test/request-detail.test.js` (6 pruebas pasadas en verde).
+
 ## 6. Errors, logs and operational checks
 
 - **Formato de error y requestId:** Cualquier error operacional controlado se lanza como una instancia de `AppError` (definida en `src/app-error.js`), la cual es interceptada por `src/middleware/error-handler.js`. Este middleware garantiza un JSON estructurado con el código de error, mensaje descriptivo y adjunta siempre el `requestId` único de la traza para auditoría.
-- **Logging operativo:** `src/middleware/request-logger.js` se suscribe al evento `finish` del ciclo de respuesta HTTP para registrar métodos, rutas, códigos de estado y latencia sin exponer nunca secretos (como cabeceras `Authorization` o tokens).
+- **Logging operativo:** `src/middleware/request-logger.js` se suscribe al evento `finish` del ciclo de respuesta HTTP para registrar métodos, rutas, códigos de estado y latencia en formato JSON estructurado, sin exponer secretos (como cabeceras `Authorization` o tokens).
 - **Diferencia entre /health y /ready:** 
   - `/health` (en `src/routes/health.routes.js`) es una verificación ligera que confirma únicamente que el proceso de Node.js está vivo y respondiendo.
-  - `/ready` evalúa la conectividad real y disponibilidad operativa contra el pool de PostgreSQL en Supabase antes de aceptar tráfico de producción.
+  - `/ready` evalúa la conectividad real y disponibilidad operativa contra el pool de PostgreSQL antes de aceptar tráfico de producción.
 
 ## 7. Minimum-practices audit
 
 | Área | Pregunta | Clasificación | Evidencia / duda |
 | --- | --- | --- | --- |
 | Configuración | ¿Los secretos están fuera del código? | COMPLIES | Variables en `.env` |
-| Entrada | ¿Se validan datos externos? | COMPLIES | Schemas y parsers |
-| SQL | ¿Las consultas están parametrizadas? | COMPLIES | Stores con queries seguras |
-| Identidad | ¿El JWT se verifica? | COMPLIES | `authenticate.js` |
+| Entrada | ¿Se validan datos externos? | COMPLIES | Schemas y parsers (`parse-id.js`) |
+| SQL | ¿Las consultas están parametrizadas? | COMPLIES | Stores con queries seguras (`$1`) |
+| Identidad | ¿El JWT se verifica? | COMPLIES | `authenticate.js` con `jwtVerify` |
 | Permisos | ¿Existe autorización además de autenticación? | COMPLIES | `request.policy.js` |
-| Ownership | ¿Se limita el acceso al propietario cuando corresponde? | COMPLIES | Políticas de acceso |
-| Dominio | ¿Los campos del servidor están protegidos? | COMPLIES | Mappers y validaciones |
-| Consistencia | ¿Las escrituras relacionadas usan transacción? | COMPLIES | Transacciones en stores |
-| Errores | ¿Existe un formato consistente? | COMPLIES | `error-handler.js` |
-| Logs | ¿Ayudan a investigar sin exponer secretos? | COMPLIES | `request-logger.js` |
-| Pruebas | ¿Existen casos positivos y negativos? | COMPLIES | Suite de pruebas en verde |
-| Migraciones | ¿El esquema está versionado? | COMPLIES | Archivos SQL numerados |
+| Ownership | ¿Se limita el acceso al propietario cuando corresponde? | COMPLIES | `canViewRequest` en `requests.service.js` |
+| Dominio | ¿Los campos del servidor están protegidos? | COMPLIES | Mappers y `rejectServerControlledFields` |
+| Consistencia | ¿Las escrituras relacionadas usan transacción? | COMPLIES | `withTransaction` en stores/services |
+| Errores | ¿Existe un formato consistente? | COMPLIES | `AppError` y `error-handler.js` |
+| Logs | ¿Ayudan a investigar sin exponer secretos? | COMPLIES | `request-logger.js` emitiendo JSON con `requestId` |
+| Pruebas | ¿Existen casos positivos y negativos? | COMPLIES | Suite `test/request-detail.test.js` (6/6 pass) |
+| Migraciones | ¿El esquema está versionado? | COMPLIES | Archivos SQL numerados en `database/migrations/` |
 | Seed | ¿Puede repetirse de forma controlada? | COMPLIES | `scripts/seed.js` |
-| Arquitectura | ¿HTTP, reglas y SQL están separados razonablemente? | COMPLIES | Capas Routes/Service/Store |
+| Arquitectura | ¿HTTP, reglas y SQL están separados razonablemente? | COMPLIES | Capas Routes/Service/Store/Policy |
 | Operación | ¿Health y readiness tienen propósitos distintos? | COMPLIES | `health.routes.js` |
 
 ## 8. Change impact
 
-[Pendiente para el bloque de auditoría y fix]
+### Observable behavior
+El usuario sin permisos/dueño no debe poder acceder al detalle o historial de peticiones ajenas. Se debe retornar `404 Not Found` en lugar de exponer datos o confirmar la existencia del recurso.
+
+### Files affected
+- `src/modules/requests/requests.service.js` (función `getRequest` habilitando `canViewRequest`).
+- `src/modules/requests/request.policy.js`.
+- `test/request-detail.test.js`.
+
+### Rule protected
+Un *requester* solo puede ver y seguir sus propias solicitudes; un *agent* puede ver todas las solicitudes de la colección.
+
+### Data required
+`actor.userId`, `actor.role`, y el campo `createdBy` del objeto `request`.
+
+### Status codes
+- Acceso autorizado (owner/agent): `200 OK`
+- Recurso no encontrado o no autorizado (anti-enumeración IDOR): `404 Not Found`
+- Sin token / inválido: `401 Unauthorized`
+
+### Tests verified
+Suite `node --test test/request-detail.test.js`:
+- `✔ without a token the detail returns 401`
+- `✔ a well-formed id that does not exist returns 404`
+- `✔ the owner reads their request and the schema is preserved`
+- `✔ an agent can read any request`
+- `✔ a different requester receives the same 404 as a missing request`
+- `✔ a userId in the query string does not grant access`
+**Resultado total:** 6 pruebas ejecutadas, 6 pasadas de forma exitosa (0 fallas).
+
+### Behavior that remains unchanged
+Los accesos legítimos del propietario (200) y de los agentes autorizados funcionan exactamente con el mismo contrato y esquema de respuesta.
 
 ## 9. Unknowns and questions
 
-- ¿Cómo se propaga exactamente el `req.auth` devuelto por el middleware de autenticación hacia los controllers y services sin romper el tipado o acoplamiento?
+- **Resuelta:** ¿Cómo se propaga el objeto `req.auth`? El middleware `authenticate.js` descodifica y valida el JWT, adscribiendo el resultado a `req.auth = { userId, role }`. Luego, el controlador o router extrae `req.auth` y lo pasa como primer argumento `actor` a las funciones del servicio (`requests.service.js`), garantizando que la capa de servicio nunca dependa de objetos HTTP (`req` o `res`).

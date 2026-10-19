@@ -66,16 +66,43 @@ test('an agent can read any request', async () => {
   assert.equal(response.body.id, created.id);
 });
 
-test('a different requester receives the same 404 as a missing request', { todo: true }, async () => {
+test('a different requester receives the same 404 as a missing request', async () => {
   // BUG-901 regression: create owner + stranger (both requesters), create a
   // request as the owner, GET it with the stranger's token.
   // Expected after your fix: 404 — indistinguishable from "does not exist"
-  // (course decision for this system: do not confirm existence).
-  // Convert me FIRST, see me fail against the bug, then fix.
+  const owner = await createUser({ name: 'request-owner' });
+  const stranger = await createUser({ name: 'request-stranger' });
+  
+  const ownerToken = await loginAs(owner);
+  const strangerToken = await loginAs(stranger);
+  
+  const created = await createRequestAs(ownerToken, { title: 'Secret Request' });
+
+  const response = await request(app)
+    .get(`/requests/${created.id}`)
+    .set('Authorization', `Bearer ${strangerToken}`);
+
+  // El sistema debe retornar 404 por seguridad para no confirmar existencia
+  assert.equal(response.status, 404);
 });
 
-test('a userId in the query string does not grant access', { todo: true }, async () => {
+test('a userId in the query string does not grant access', async () => {
   // BUG-901 regression: stranger requests
   //   GET /requests/:id?userId=<uuid del owner>
   // The trusted identity comes ONLY from the verified token: still 404.
+  const owner = await createUser({ name: 'request-owner-query' });
+  const stranger = await createUser({ name: 'request-stranger-query' });
+  
+  const ownerToken = await loginAs(owner);
+  const strangerToken = await loginAs(stranger);
+  
+  const created = await createRequestAs(ownerToken, { title: 'Query Exploit Test' });
+
+  // Intentar burlar la seguridad pasando el userId del owner por query param
+  const response = await request(app)
+    .get(`/requests/${created.id}?userId=${owner.id}`)
+    .set('Authorization', `Bearer ${strangerToken}`);
+
+  // Debe retornar 404 porque la identidad se confía exclusivamente del token verificado
+  assert.equal(response.status, 404);
 });
