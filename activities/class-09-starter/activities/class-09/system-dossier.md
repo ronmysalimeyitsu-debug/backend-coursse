@@ -61,7 +61,11 @@ Recorrido completo de `GET /requests/:id` — en orden, con archivo y función e
 - **Ejemplo y prueba:** Las reglas se validan en pruebas unitarias como `test/request-policy.test.js`[cite: 7].
 ## 6. Errors, logs and operational checks
 
-[COMPLETAR — formato de error y requestId]
+- **Formato de error y requestId:** Cualquier error operacional controlado se lanza como una instancia de `AppError` (definida en `src/app-error.js`), la cual es interceptada por `src/middleware/error-handler.js`. Este middleware garantiza un JSON estructurado con el código de error, mensaje descriptivo y adjunta siempre el `requestId` único de la traza para auditoría.
+- **Logging operativo:** `src/middleware/request-logger.js` se suscribe al evento `finish` del ciclo de respuesta HTTP para registrar métodos, rutas, códigos de estado y latencia sin exponer nunca secretos (como cabeceras `Authorization` o tokens).
+- **Diferencia entre /health y /ready:** 
+  - `/health` (en `src/routes/health.routes.js`) es una verificación ligera que confirma únicamente que el proceso de Node.js está vivo y respondiendo.
+  - `/ready` evalúa la conectividad real y disponibilidad operativa contra el pool de PostgreSQL en Supabase antes de aceptar tráfico de producción.
 
 ## 7. Minimum-practices audit
 
