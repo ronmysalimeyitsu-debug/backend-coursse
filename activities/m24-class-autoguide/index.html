@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>M24 · Clase autónoma</title>
+  <style>
+    :root {
+      --bg: #07101d;
+      --panel: #0e1b2c;
+      --panel-2: #13233a;
+      --line: #2a3b54;
+      --text: #f5f7fb;
+      --muted: #aab8ca;
+      --red: #e23b42;
+      --red-dark: #a91f2a;
+      --blue: #43a6ff;
+      --green: #48d597;
+      --amber: #ffc857;
+      --shadow: 0 20px 55px rgba(0,0,0,.28);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 85% 5%, rgba(67,166,255,.14), transparent 28rem),
+        radial-gradient(circle at 8% 38%, rgba(226,59,66,.12), transparent 30rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); min-height: 100vh; }
+    aside {
+      position: sticky; top: 0; height: 100vh; overflow: auto;
+      padding: 26px 20px; border-right: 1px solid var(--line);
+      background: rgba(7,16,29,.92); backdrop-filter: blur(16px);
+    }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+    .brand-mark {
+      width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+      background: linear-gradient(145deg, var(--red), var(--red-dark)); font-weight: 900;
+      box-shadow: 0 10px 28px rgba(226,59,66,.28);
+    }
+    .brand strong { display:block; font-size: 1.05rem; letter-spacing: .02em; }
+    .brand small { color: var(--muted); }
+    nav a {
+      display: block; padding: 10px 12px; margin: 4px 0; text-decoration: none;
+      color: var(--muted); border-radius: 10px; font-size: .92rem;
+    }
+    nav a:hover, nav a:focus { background: var(--panel); color: var(--text); outline: none; }
+    .side-progress { margin-top: 28px; padding: 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; }
+    .progress-track { height: 8px; background: #07101d; border-radius: 99px; overflow: hidden; margin-top: 10px; }
+    .progress-fill { height: 100%; width: 0; background: linear-gradient(90deg, var(--red), var(--blue)); transition: width .25s ease; }
+    main { min-width: 0; }
+    .hero { padding: 72px clamp(24px, 6vw, 88px) 58px; border-bottom: 1px solid var(--line); }
+    .eyebrow { color: var(--blue); text-transform: uppercase; font-weight: 800; font-size: .78rem; letter-spacing: .18em; }
+    h1 { margin: 12px 0 18px; max-width: 950px; font-size: clamp(2.5rem, 6vw, 5.6rem); line-height: .98; letter-spacing: -.05em; }
+    .hero p { max-width: 760px; color: var(--muted); font-size: clamp(1rem, 1.5vw, 1.22rem); }
+    .hero-actions { display:flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+    .btn {
+      border: 1px solid var(--line); background: var(--panel); color: var(--text);
+      border-radius: 12px; padding: 11px 16px; font-weight: 750; text-decoration:none;
+    }
+    .btn:hover { transform: translateY(-1px); border-color: var(--blue); }
+    .btn.primary { border-color: transparent; background: linear-gradient(135deg, var(--red), var(--red-dark)); }
+    .btn.secondary { background: linear-gradient(135deg, #18304f, #10223a); }
+    section { padding: 58px clamp(24px, 6vw, 88px); border-bottom: 1px solid var(--line); }
+    section > header { max-width: 850px; margin-bottom: 28px; }
+    h2 { font-size: clamp(1.8rem, 3vw, 3rem); margin: 8px 0 10px; letter-spacing: -.03em; }
+    h3 { margin: 0 0 8px; }
+    p.lead { color: var(--muted); font-size: 1.08rem; }
+    .grid { display:grid; grid-template-columns: repeat(12, minmax(0,1fr)); gap: 16px; }
+    .card {
+      grid-column: span 4; padding: 22px; background: linear-gradient(145deg, rgba(19,35,58,.94), rgba(11,24,41,.94));
+      border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .card.wide { grid-column: span 6; }
+    .card.full { grid-column: 1 / -1; }
+    .card p, .card li { color: var(--muted); }
+    .number { width: 34px; height: 34px; display:grid; place-items:center; border-radius: 10px; background: rgba(67,166,255,.14); color: var(--blue); font-weight: 900; margin-bottom: 14px; }
+    .phase { position:relative; overflow:hidden; }
+    .phase::after { content:""; position:absolute; inset:auto -30px -40px auto; width:130px; height:130px; border:24px solid rgba(255,255,255,.025); border-radius:50%; }
+    .tag { display:inline-flex; gap:6px; align-items:center; padding:5px 9px; border:1px solid var(--line); border-radius:99px; color:var(--muted); font-size:.78rem; }
+    .tag.red { color:#ff9da1; border-color:rgba(226,59,66,.42); }
+    .tag.green { color:#84efbd; border-color:rgba(72,213,151,.4); }
+    .timer {
+      display:grid; grid-template-columns: auto 1fr; gap:18px; align-items:center;
+      padding:22px; background:#050b13; border:1px solid var(--line); border-radius:var(--radius);
+    }
+    .clock { min-width: 150px; font-variant-numeric: tabular-nums; font-size: 2.2rem; font-weight: 900; letter-spacing:.04em; }
+    .timer-controls { display:flex; gap:8px; flex-wrap:wrap; }
+    .timer-controls button { border:1px solid var(--line); color:var(--text); background:var(--panel); padding:8px 11px; border-radius:9px; }
+    .timeline { display:grid; gap:10px; }
+    .time-row { display:grid; grid-template-columns:85px 1fr auto; gap:16px; align-items:center; padding:14px 16px; background:var(--panel); border:1px solid var(--line); border-radius:12px; }
+    .time-row strong { color:var(--blue); font-variant-numeric:tabular-nums; }
+    .time-row span { color:var(--muted); }
+    .checklist { display:grid; gap:9px; }
+    .check {
+      display:flex; gap:11px; align-items:flex-start; padding:12px; border:1px solid var(--line); border-radius:11px; background:rgba(7,16,29,.55);
+    }
+    .check input { margin-top:5px; accent-color:var(--green); width:17px; height:17px; }
+    .check label { cursor:pointer; }
+    .check small { display:block; color:var(--muted); }
+    .file-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .file-link { text-decoration:none; padding:13px; border:1px solid var(--line); border-radius:11px; background:#0a1728; color:var(--muted); }
+    .file-link:hover { color:var(--text); border-color:var(--blue); }
+    .flow { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    .flow span { padding:9px 11px; background:var(--panel); border:1px solid var(--line); border-radius:10px; }
+    .flow b { color:var(--red); }
+    code { color:#9fd1ff; background:#06101d; border:1px solid #1f334b; padding:2px 6px; border-radius:6px; }
+    pre { overflow:auto; padding:18px; background:#050b13; border:1px solid var(--line); border-radius:13px; color:#bde0ff; }
+    .callout { padding:18px 20px; border-left:4px solid var(--amber); background:rgba(255,200,87,.08); border-radius:0 12px 12px 0; color:#ffe6a9; }
+    .danger { border-left-color:var(--red); background:rgba(226,59,66,.09); color:#ffc4c7; }
+    .success { border-left-color:var(--green); background:rgba(72,213,151,.08); color:#baf7dc; }
+    .prompt-box { position:relative; }
+    .prompt-box textarea { width:100%; min-height:260px; resize:vertical; background:#050b13; color:#c9dcf2; border:1px solid var(--line); border-radius:14px; padding:18px; font: .88rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prompt-actions { display:flex; justify-content:flex-end; gap:8px; margin-top:10px; }
+    footer { padding:34px clamp(24px, 6vw, 88px); color:var(--muted); }
+    .mobile-top { display:none; }
+    @media (max-width: 900px) {
+      .layout { display:block; }
+      aside { display:none; }
+      .mobile-top { display:flex; position:sticky; top:0; z-index:10; align-items:center; justify-content:space-between; padding:12px 16px; background:rgba(7,16,29,.94); border-bottom:1px solid var(--line); backdrop-filter:blur(14px); }
+      .card, .card.wide { grid-column:1/-1; }
+      .file-list { grid-template-columns:1fr; }
+      .timer { grid-template-columns:1fr; }
+      .time-row { grid-template-columns:70px 1fr; }
+      .time-row .tag { display:none; }
+    }
+    @media print {
+      aside, .mobile-top, .hero-actions, .timer-controls { display:none!important; }
+      .layout { display:block; }
+      body { background:white; color:#111; }
+      section, .hero { padding:28px; }
+      .card, .time-row, .timer { box-shadow:none; background:white; color:#111; break-inside:avoid; }
+      .card p, .card li, p.lead, .time-row span { color:#333; }
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-top"><strong>M24 · Clase autónoma</strong><span id="mobileProgress">0%</span></div>
+  <div class="layout">
+    <aside>
+      <div class="brand"><div class="brand-mark">M24</div><div><strong>Vending Platform</strong><small>Proyecto integrador</small></div></div>
+      <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#hoy">Plan de hoy</a>
+        <a href="#fase1">Fase 1 · Aprender</a>
+        <a href="#fase2">Fase 2 · Construir</a>
+        <a href="#producto">Producto</a>
+        <a href="#materiales">Materiales</a>
+        <a href="#checkpoint">Checkpoint</a>
+      </nav>
+      <div class="side-progress">
+        <strong>Progreso de hoy</strong>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <small id="progressText">0 de 12 pasos</small>
+      </div>
+    </aside>
+    <main>
+      <header class="hero" id="inicio">
+        <div class="eyebrow">Clase autónoma · Proyecto individual</div>
+        <h1>Aprende el sistema. Luego constrúyelo.</h1>
+        <p>M24 será una plataforma multitenant para administrar redes de máquinas vending. Hoy estudiarás los conceptos, tomarás decisiones y dejarás la primera vertical en marcha.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#fase1">Comenzar fase 1</a>
+          <a class="btn secondary" href="README.md">Abrir README</a>
+          <button class="btn" onclick="window.print()">Imprimir guía</button>
+        </div>
+      </header>
+
+      <section id="hoy">
+        <header><div class="eyebrow">180 minutos</div><h2>Tu ruta de trabajo hoy</h2><p class="lead">Sigue el orden. El objetivo no es terminar M24 hoy, sino salir con conocimiento, estructura y una primera vertical verificable.</p></header>
+        <div class="timer">
+          <div class="clock" id="clock">70:00</div>
+          <div><strong>Temporizador personal</strong><p style="color:var(--muted);margin:4px 0 12px">Selecciona el bloque y controla tu tiempo sin esperar instrucciones.</p><div class="timer-controls"><button data-min="70">Estudio 70</button><button data-min="10">Descanso 10</button><button data-min="100">Proyecto 100</button><button id="timerToggle">Iniciar</button><button id="timerReset">Reiniciar</button></div></div>
+        </div>
+        <div class="timeline" style="margin-top:18px">
+          <div class="time-row"><strong>0–70</strong><span>Aprendizaje guiado con Gemini</span><span class="tag red">FASE 1</span></div>
+          <div class="time-row"><strong>70–80</strong><span>Descanso</span><span class="tag">PAUSA</span></div>
+          <div class="time-row"><strong>80–115</strong><span>Leer especificación y diseñar</span><span class="tag green">FASE 2</span></div>
+          <div class="time-row"><strong>115–155</strong><span>Repositorio, apps, Supabase y migraciones</span><span class="tag green">FASE 2</span></div>
+          <div class="time-row"><strong>155–180</strong><span>Primera vertical, evidencia y commit</span><span class="tag green">FASE 2</span></div>
+        </div>
+      </section>
+
+      <section id="fase1">
+        <header><div class="eyebrow">Fase 1</div><h2>Gemini será tu tutor</h2><p class="lead">En esta fase no le pidas construir el proyecto. Trabaja los diez módulos, explica con tus palabras y conserva el reporte final.</p></header>
+        <div class="grid">
+          <article class="card phase"><div class="number">1</div><h3>Abre el prompt</h3><p>Usa el superprompt completo y comienza una conversación nueva.</p><a class="btn" href="prompts/01-GEMINI-TUTOR.md">Abrir prompt</a></article>
+          <article class="card phase"><div class="number">2</div><h3>Estudia por módulos</h3><p>No saltes módulos. Si algo no está claro, pide otro ejemplo aplicado a M24.</p><a class="btn" href="#materiales">Ver guías</a></article>
+          <article class="card phase"><div class="number">3</div><h3>Registra evidencia</h3><p>Completa tu learning log y conserva el reporte de preparación.</p><a class="btn" href="templates/learning-log.md">Abrir plantilla</a></article>
+        </div>
+        <div class="callout danger" style="margin-top:20px"><strong>No compartas secretos.</strong> No pegues `.env`, contraseñas, JWT secrets, connection strings ni service keys.</div>
+        <div class="callout" style="margin-top:14px"><strong>¿Gemini se salió del carril?</strong> No discutas indefinidamente con el modelo. Usa el <a href="prompts/03-BEHAVIOR-RECOVERY.md">prompt de recuperación</a>, indica la fase y describe la desviación en una frase.</div>
+        <div class="prompt-box" style="margin-top:24px">
+          <h3>Inicio rápido para Gemini</h3>
+          <textarea id="quickPrompt" readonly>Voy a adjuntarte o pegarte un superprompt llamado “Gemini como tutor para M24”. Síguelo exactamente. Durante la fase de estudio no debes construir el proyecto ni darme una solución completa. Debes enseñarme un módulo a la vez, comprobar mi comprensión y terminar con un M24 Learning Readiness Report.</textarea>
+          <div class="prompt-actions"><button class="btn" id="copyPrompt">Copiar inicio rápido</button><a class="btn primary" href="prompts/01-GEMINI-TUTOR.md">Abrir superprompt completo</a></div>
+        </div>
+        <div class="checklist" data-group="class" style="margin-top:24px">
+          <div class="check"><input type="checkbox" id="c1"><label for="c1"><strong>Abrí una conversación nueva</strong><small>No reutilicé una conversación con contexto ajeno.</small></label></div>
+          <div class="check"><input type="checkbox" id="c2"><label for="c2"><strong>Completé los diez módulos</strong><small>Respondí checks y explicaciones propias.</small></label></div>
+          <div class="check"><input type="checkbox" id="c3"><label for="c3"><strong>Guardé el reporte del tutor</strong><small>Registré READY, NEEDS_REVIEW y NOT_CLEAR.</small></label></div>
+          <div class="check"><input type="checkbox" id="c4"><label for="c4"><strong>Completé learning-log.md</strong><small>Reconocí dudas en lugar de inventar respuestas.</small></label></div>
+        </div>
+      </section>
+
+      <section id="fase2">
+        <header><div class="eyebrow">Fase 2</div><h2>Convierte conocimiento en decisiones</h2><p class="lead">Ahora sí puedes utilizar IA para planificar y programar. Primero resume el cambio, identifica invariantes y define cómo lo verificarás.</p></header>
+        <div class="grid">
+          <article class="card wide"><h3>1. Comprende</h3><ul><li>Lee alcance y arquitectura.</li><li>Identifica actores, estados y fronteras.</li><li>Anota decisiones que faltan.</li></ul></article>
+          <article class="card wide"><h3>2. Diseña</h3><ul><li>Modelo de datos.</li><li>Tenant context.</li><li>Permisos.</li><li>Primera vertical.</li></ul></article>
+          <article class="card wide"><h3>3. Construye</h3><ul><li>Tres apps.</li><li>PostgreSQL/Supabase.</li><li>Migraciones y seed.</li><li>Contrato mínimo.</li></ul></article>
+          <article class="card wide"><h3>4. Verifica</h3><ul><li>Ejecuta.</li><li>Prueba.</li><li>Guarda evidencia.</li><li>Explica límites.</li></ul></article>
+        </div>
+        <div class="callout" style="margin-top:20px">Puedes cambiar la estructura recomendada, pero debes justificar cómo preserva tenant isolation, responsabilidades y verificabilidad.</div>
+        <div class="checklist" data-group="class" style="margin-top:24px">
+          <div class="check"><input type="checkbox" id="c5"><label for="c5"><strong>Leí las especificaciones principales</strong><small>Alcance, arquitectura, datos, permisos, estados y API.</small></label></div>
+          <div class="check"><input type="checkbox" id="c6"><label for="c6"><strong>Definí mi primera vertical</strong><small>El resultado puede demostrarse de extremo a extremo.</small></label></div>
+          <div class="check"><input type="checkbox" id="c7"><label for="c7"><strong>Creé el repositorio</strong><small>Las apps arrancan o tienen comandos claros.</small></label></div>
+          <div class="check"><input type="checkbox" id="c8"><label for="c8"><strong>Conecté Supabase</strong><small>Sin exponer credenciales.</small></label></div>
+          <div class="check"><input type="checkbox" id="c9"><label for="c9"><strong>Creé migraciones iniciales</strong><small>Tenant, ubicación, máquina, producto y slot.</small></label></div>
+        </div>
+      </section>
+
+      <section id="producto">
+        <header><div class="eyebrow">Entrega semanal</div><h2>Cuatro piezas, un solo sistema</h2><p class="lead">La plataforma debe demostrar un recorrido integrado, no cuatro proyectos aislados.</p></header>
+        <div class="grid">
+          <article class="card"><span class="tag red">APP 1</span><h3 style="margin-top:12px">Admin web</h3><p>Tenants, acceso, ubicaciones, máquinas, catálogo, inventario, órdenes, pagos, despacho, reportes y auditoría.</p></article>
+          <article class="card"><span class="tag red">APP 2</span><h3 style="margin-top:12px">Vending web</h3><p>Simulador desktop, QR y experiencia móvil del comprador.</p></article>
+          <article class="card"><span class="tag red">APP 3</span><h3 style="margin-top:12px">Backend</h3><p>REST, RBAC, tenant context, estados, consistencia, idempotencia, logs y pruebas.</p></article>
+          <article class="card full"><span class="tag red">DATA</span><h3 style="margin-top:12px">PostgreSQL / Supabase</h3><p>Migraciones, seed, constraints, índices, transacciones, reservas, ledger, auditoría y aislamiento.</p></article>
+        </div>
+        <h3 style="margin-top:30px">Flujo obligatorio</h3>
+        <div class="flow"><span>Configurar</span><b>→</b><span>Mostrar QR</span><b>→</b><span>Comprar</span><b>→</b><span>Pagar</span><b>→</b><span>Despachar</span><b>→</b><span>Actualizar stock</span><b>→</b><span>Reportar</span></div>
+      </section>
+
+      <section id="materiales">
+        <header><div class="eyebrow">Biblioteca local</div><h2>Materiales del paquete</h2><p class="lead">Abre los documentos según tu fase. No necesitas leer toda la especificación de una sola vez.</p></header>
+        <h3>Teoría</h3>
+        <div class="file-list">
+          <a class="file-link" href="theory/01-DOMAIN-AND-BOUNDARIES.md">01 · Dominio y límites</a>
+          <a class="file-link" href="theory/02-MULTITENANCY.md">02 · Multitenencia</a>
+          <a class="file-link" href="theory/03-AUTH-RBAC-AND-DEVICE-IDENTITY.md">03 · Auth, RBAC y dispositivos</a>
+          <a class="file-link" href="theory/04-STATE-MACHINES.md">04 · Máquinas de estado</a>
+          <a class="file-link" href="theory/05-INVENTORY-RESERVATIONS-AND-LEDGER.md">05 · Inventario y reservas</a>
+          <a class="file-link" href="theory/06-TRANSACTIONS-CONCURRENCY-IDEMPOTENCY.md">06 · Concurrencia e idempotencia</a>
+          <a class="file-link" href="theory/07-PAYMENT-AND-DISPENSING.md">07 · Pago y despacho</a>
+          <a class="file-link" href="theory/08-SECURITY-PRIVACY-AND-AUDIT.md">08 · Seguridad y auditoría</a>
+          <a class="file-link" href="theory/09-TESTING-OBSERVABILITY-AND-OPERATIONS.md">09 · Pruebas y operación</a>
+          <a class="file-link" href="theory/10-PRODUCTION-READINESS.md">10 · Production readiness</a>
+        </div>
+        <h3 style="margin-top:28px">Especificación</h3>
+        <div class="file-list">
+          <a class="file-link" href="specification/01-PRODUCT-SCOPE.md">Alcance del producto</a>
+          <a class="file-link" href="specification/02-SYSTEM-ARCHITECTURE.md">Arquitectura</a>
+          <a class="file-link" href="specification/03-DATA-MODEL.md">Modelo de datos</a>
+          <a class="file-link" href="specification/04-PERMISSIONS-MATRIX.md">Permisos</a>
+          <a class="file-link" href="specification/05-STATE-MACHINES.md">Estados</a>
+          <a class="file-link" href="specification/06-API-CONTRACT.md">Contrato API</a>
+          <a class="file-link" href="specification/07-BUSINESS-RULES.md">Reglas</a>
+          <a class="file-link" href="specification/08-ERROR-CATALOG.md">Errores</a>
+          <a class="file-link" href="specification/09-REPORTING-AND-RECONCILIATION.md">Reportes</a>
+          <a class="file-link" href="specification/10-NON-FUNCTIONAL-REQUIREMENTS.md">No funcionales</a>
+          <a class="file-link" href="specification/11-ACCEPTANCE-CRITERIA.md">Aceptación</a>
+          <a class="file-link" href="specification/12-TEST-MATRIX.md">Matriz de pruebas</a>
+          <a class="file-link" href="specification/13-WEEKLY-ROADMAP.md">Ruta de una semana</a>
+          <a class="file-link" href="specification/14-FINAL-DEMO-AND-DEFENSE.md">Demo y defensa final</a>
+        </div>
+        <h3 style="margin-top:28px">Control del asistente</h3>
+        <div class="file-list">
+          <a class="file-link" href="prompts/01-GEMINI-TUTOR.md">Superprompt del tutor</a>
+          <a class="file-link" href="prompts/02-IMPLEMENTATION-ASSISTANT.md">Asistente de implementación</a>
+          <a class="file-link" href="prompts/03-BEHAVIOR-RECOVERY.md">Recuperar comportamiento</a>
+        </div>
+        <h3 style="margin-top:28px">Verificación común</h3>
+        <div class="file-list">
+          <a class="file-link" href="validator/README.md">Cómo ejecutar el validador</a>
+          <a class="file-link" href="validator/validator.config.example.json">Configuración de ejemplo</a>
+          <a class="file-link" href="validator/validate.mjs">Script de validación</a>
+        </div>
+      </section>
+
+      <section id="checkpoint">
+        <header><div class="eyebrow">Últimos 10 minutos</div><h2>Cierra con evidencia</h2><p class="lead">No termines simplemente cerrando el editor. Deja una fotografía reproducible del estado del proyecto.</p></header>
+        <div class="checklist" data-group="class">
+          <div class="check"><input type="checkbox" id="c10"><label for="c10"><strong>Actualicé mis documentos</strong><small>Plan, decisiones, learning log y AI usage.</small></label></div>
+          <div class="check"><input type="checkbox" id="c11"><label for="c11"><strong>Registré evidencia ejecutada</strong><small>Comandos y resultados, no afirmaciones.</small></label></div>
+          <div class="check"><input type="checkbox" id="c12"><label for="c12"><strong>Creé el commit m24-class-kickoff</strong><small>El repositorio queda en un estado conocido.</small></label></div>
+        </div>
+        <div class="callout success" style="margin-top:24px"><strong>Antes de irte puedes responder:</strong> qué funciona, qué falta, qué harás después, qué riesgo es prioritario y qué parte todavía no sabes explicar.</div>
+      </section>
+
+      <footer>M24 · Backend, integración y criterio técnico · El progreso se guarda solamente en este navegador.</footer>
+    </main>
+  </div>
+  <script>
+    const checks = [...document.querySelectorAll('[data-group="class"] input[type="checkbox"]')];
+    const storageKey = 'm24-class-progress-v1';
+    const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    checks.forEach(c => { c.checked = !!saved[c.id]; c.addEventListener('change', saveProgress); });
+    function saveProgress(){
+      const state = {}; checks.forEach(c => state[c.id] = c.checked);
+      localStorage.setItem(storageKey, JSON.stringify(state)); updateProgress();
+    }
+    function updateProgress(){
+      const done = checks.filter(c => c.checked).length;
+      const pct = Math.round(done / checks.length * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${done} de ${checks.length} pasos`;
+      document.getElementById('mobileProgress').textContent = pct + '%';
+    }
+    updateProgress();
+
+    let initialSeconds = 70 * 60, remaining = initialSeconds, interval = null;
+    const clock = document.getElementById('clock');
+    function renderClock(){
+      const m = Math.floor(remaining/60).toString().padStart(2,'0');
+      const s = (remaining%60).toString().padStart(2,'0');
+      clock.textContent = `${m}:${s}`;
+      clock.style.color = remaining <= 180 ? 'var(--amber)' : 'var(--text)';
+    }
+    document.querySelectorAll('[data-min]').forEach(btn => btn.addEventListener('click', () => {
+      clearInterval(interval); interval = null;
+      initialSeconds = Number(btn.dataset.min) * 60; remaining = initialSeconds;
+      document.getElementById('timerToggle').textContent = 'Iniciar'; renderClock();
+    }));
+    document.getElementById('timerToggle').addEventListener('click', e => {
+      if(interval){ clearInterval(interval); interval=null; e.target.textContent='Continuar'; return; }
+      if(remaining <= 0) remaining = initialSeconds;
+      interval = setInterval(() => { remaining--; renderClock(); if(remaining<=0){ clearInterval(interval); interval=null; } }, 1000);
+      e.target.textContent='Pausar';
+    });
+    document.getElementById('timerReset').addEventListener('click', () => { clearInterval(interval); interval=null; remaining=initialSeconds; document.getElementById('timerToggle').textContent='Iniciar'; renderClock(); });
+    renderClock();
+
+    document.getElementById('copyPrompt').addEventListener('click', async e => {
+      const text = document.getElementById('quickPrompt').value;
+      try { await navigator.clipboard.writeText(text); e.target.textContent='Copiado'; setTimeout(()=>e.target.textContent='Copiar inicio rápido',1600); }
+      catch { document.getElementById('quickPrompt').select(); document.execCommand('copy'); }
+    });
+  </script>
+</body>
+</html>

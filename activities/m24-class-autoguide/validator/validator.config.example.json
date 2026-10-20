@@ -1,0 +1,9 @@
+{
+  "apiBaseUrl": "http://localhost:3000/api/v1",
+  "publicCode": "machine-demo-a",
+  "mode": "smoke",
+  "slotId": "replace-with-seeded-slot-id",
+  "quantity": 1,
+  "timeoutMs": 8000
+}
+
