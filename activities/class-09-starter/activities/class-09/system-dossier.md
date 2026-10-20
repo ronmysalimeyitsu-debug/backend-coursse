@@ -99,33 +99,14 @@ Recorrido completo de `GET /requests/:id` — en orden, con archivo y función e
 
 ## 8. Change impact
 
-### What changes
-- Se actualizará la función del servicio (`src/modules/requests/requests.service.js` en `getRequest`) para incorporar la validación explícita de la política de visibilidad (`canViewRequest`).
+### Observable behavior
+- El sistema evalúa correctamente la visibilidad de las solicitudes mediante la política de acceso.
 
-### What must NOT change
-- El dueño de una solicitud o un agente autorizado deben seguir recibiendo un código HTTP `200 OK` con el mismo formato JSON de contrato.
-- La lista general de solicitudes debe seguir filtrando por rol exactamente igual que antes.
+### Status codes
+- Se retorna `200 OK` para propietarios y agentes, y `404 Not Found` uniforme para usuarios no autorizados o inexistentes.
 
-### Risks
-- Si por error la política se evalúa con el actor incorrecto, los agentes podrían perder visibilidad sobre solicitudes que atienden.
-- Mitigación: Reutilizar estrictamente la función de política existente y validar con pruebas automatizadas.
-
-### How it will be verified
-- Mediante la ejecución de la suite de pruebas automatizadas del detalle.
-
-### Files likely affected
-- `src/modules/requests/requests.service.js`
-- `src/modules/requests/request.policy.js`
-- `test/request-detail.test.js`
-
-### Rule to protect
-- Un requester solo puede ver y seguir sus propias solicitudes; un agent puede ver todas las solicitudes de la colección.
-
-### Tests to add or change
-- Conversión de las pruebas de regresión y verificación de visibilidad en `test/request-detail.test.js`.
-
-### Behavior that remains unchanged
-- Los accesos legítimos del propietario (200) y de los agentes autorizados funcionan con el mismo contrato y esquema de respuesta.
+### Behavior that must remain unchanged
+- La estructura de los contratos JSON, las listas filtradas por rol y el comportamiento de las demás rutas del sistema permanecen intactos.
 ## 9. Unknowns and questions
 
 - **Resuelta:** ¿Cómo se propaga el objeto `req.auth`? El middleware `authenticate.js` descodifica y valida el JWT, adscribiendo el resultado a `req.auth = { userId, role }`. Luego, el controlador o router extrae `req.auth` y lo pasa como primer argumento `actor` a las funciones del servicio (`requests.service.js`), garantizando que la capa de servicio nunca dependa de objetos HTTP (`req` o `res`).
