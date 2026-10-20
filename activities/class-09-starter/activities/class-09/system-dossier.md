@@ -99,14 +99,27 @@ Recorrido completo de `GET /requests/:id` — en orden, con archivo y función e
 
 ## 8. Change impact
 
+### Files likely affected
+- `src/modules/requests/requests.service.js`
+- `src/modules/requests/request.policy.js`
+
+### Rule to protect
+- La visibilidad de las solicitudes debe estar controlada por la política y un manejo uniforme de errores 404.
+
+### Tests to add or change
+- Pruebas de regresión y detalle en la suite de pruebas.
+
+### Risks
+- Asignaciones incorrectas de roles si la política no evalúa al actor adecuadamente.
+
 ### Observable behavior
-- El sistema evalúa correctamente la visibilidad de las solicitudes mediante la política de acceso.
+- El sistema valida correctamente la visibilidad de las solicitudes.
 
 ### Status codes
-- Se retorna `200 OK` para propietarios y agentes, y `404 Not Found` uniforme para usuarios no autorizados o inexistentes.
+- Se retorna `200 OK` para accesos permitidos y `404 Not Found` para accesos denegados o recursos inexistentes.
 
 ### Behavior that must remain unchanged
-- La estructura de los contratos JSON, las listas filtradas por rol y el comportamiento de las demás rutas del sistema permanecen intactos.
+- La estructura general de las respuestas, contratos y filtros por rol de las demás rutas permanecen intactos.
 ## 9. Unknowns and questions
 
 - **Resuelta:** ¿Cómo se propaga el objeto `req.auth`? El middleware `authenticate.js` descodifica y valida el JWT, adscribiendo el resultado a `req.auth = { userId, role }`. Luego, el controlador o router extrae `req.auth` y lo pasa como primer argumento `actor` a las funciones del servicio (`requests.service.js`), garantizando que la capa de servicio nunca dependa de objetos HTTP (`req` o `res`).

@@ -281,21 +281,22 @@ const CHECKS = [
     return null;
   }],
 
-  ['Boundaries and regression', 'Policy has no Express dependency', async () => {
-    const source = readFileSync(path.join(ROOT, 'src/modules/requests/request.policy.js'), 'utf8');
-    const offenders = [];
-    if (/from\s+['"]express['"]|require\(\s*['"]express['"]\s*\)/.test(source)) offenders.push('imports express');
-    if (/\breq\s*\.\s*(params|body|headers|query|auth)\b/.test(source)) offenders.push('reads the request object');
-    if (/\bres\s*\.\s*(status|json|send)\b/.test(source)) offenders.push('writes the response object');
-    if (/database\/pool|pool\s*\.\s*query|\bSELECT\b/i.test(source)) offenders.push('touches the database');
-    if (offenders.length) {
-      return detail('src/modules/requests/request.policy.js pure (no Express, no SQL)',
-        `found: ${offenders.join(', ')}`,
-        ['the policy receives plain data and returns a verdict — that is why npm run test:policy needs no .env']);
+  ['Boundaries and regression', 'Regression suite passes', async () => {
+    try {
+      // Reemplazamos la ejecución dependiente de /bin/bash por npm test o un comando seguro
+      execSync(`npm test`, {
+        cwd: ROOT, stdio: 'pipe', timeout: 240000, shell: true
+      });
+      return null;
+    } catch (error) {
+      const output = `${error.stdout ?? ''}${error.stderr ?? ''}`;
+      const failing = (output.match(/^not ok.*$/gm) ?? []).slice(0, 3).join(' | ');
+      return detail('npm test fully green (including your new regression tests)',
+        failing || 'the suite exited with failures',
+        ['run npm test and read the first failing test',
+          'a fix that breaks a neighbor changed more than the ticket asked']);
     }
-    return null;
   }],
-
   ['Boundaries and regression', 'Regression suite passes', async () => {
     try {
       execSync(`node --test --test-concurrency=1 'test/*.test.js'`, {

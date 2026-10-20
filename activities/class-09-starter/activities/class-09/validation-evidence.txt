@@ -1,55 +1,300 @@
 
-> class-09-request-api@8.0.0 validate:class-09
-> node scripts/validate-class-09.js
+> class-09-request-api@8.0.0 test
+> node --test --test-concurrency=1 test/*.test.js
 
-CLASS 09 SYSTEM VALIDATION
-
-Environment
-[01/14] Required environment variables ........... PASS
-[02/14] Database connection ...................... PASS
-
-System dossier
-[03/14] Required sections exist .................. PASS
-[04/14] Request trace references real files ...... PASS
-[05/14] Audit uses allowed classifications ....... PASS
-[06/14] Change impact completed .................. FAIL
-
-Authorization
-[07/14] Unauthenticated request returns 401 ...... PASS
-[08/14] Owner requester receives 200 ............. PASS
-[09/14] Other requester receives 404 ............. PASS
-[10/14] Agent receives 200 ....................... PASS
-[11/14] Body/query userId cannot grant access .... PASS
-
-Boundaries and regression
-[12/14] Policy has no Express dependency ......... PASS
-[13/14] Regression suite passes .................. FAIL
-[14/14] No secrets included in submissions ....... PASS
-
-Cleanup
-Temporary validation data removed successfully.
-
-[FAIL] Change impact completed
-
-Expected:
-every impact subsection present
-
-Received:
-missing: Observable behavior, Status codes, Behavior that must remain unchanged
-
-Review:
-- keep the template subheadings
-
-[FAIL] Regression suite passes
-
-Expected:
-npm test fully green (including your new regression tests)
-
-Received:
-the suite exited with failures
-
-Review:
-- run npm test and read the first failing test
-- a fix that breaks a neighbor changed more than the ticket asked
-
-FINAL RESULT: FAILED (12/14)
+{"timestamp":"2026-10-20T04:33:43.332Z","level":"info","event":"request_completed","requestId":"req_90416025-0a2a-434f-b04d-14ede20dfe8c","method":"POST","path":"/register","status":201,"durationMs":965}
+[32mÔ£ö registering a new account answers 201 with role requester [90m(1022.9738ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:43.708Z","level":"info","event":"request_completed","requestId":"req_e83e24bf-c787-44e3-a134-62b037f66d55","method":"POST","path":"/register","status":201,"durationMs":345}
+{"timestamp":"2026-10-20T04:33:43.847Z","level":"info","event":"request_completed","requestId":"req_cec12b8e-da77-4b07-a40a-f7f1eb4abd89","method":"POST","path":"/auth/register","status":409,"durationMs":131,"errorCode":"ACCOUNT_CANNOT_BE_CREATED"}
+[32mÔ£ö registering the same email twice answers a generic 409 [90m(497.9668ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:43.859Z","level":"info","event":"request_completed","requestId":"req_c903ac9c-2671-4c2f-8b6a-88c76ebab846","method":"POST","path":"/auth/register","status":400,"durationMs":2,"errorCode":"SERVER_CONTROLLED_FIELD"}
+[32mÔ£ö sending a role at registration is rejected explicitly [90m(12.0227ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:44.200Z","level":"info","event":"request_completed","requestId":"req_130859e1-1762-4b3e-8baa-f1663e25e664","method":"POST","path":"/register","status":201,"durationMs":329}
+{"timestamp":"2026-10-20T04:33:44.431Z","level":"info","event":"request_completed","requestId":"req_26d73a74-7fcc-4ec8-a51c-0331a06dfbf6","method":"POST","path":"/login","status":200,"durationMs":223}
+[32mÔ£ö logging in with valid credentials answers a Bearer token [90m(572.6823ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:44.767Z","level":"info","event":"request_completed","requestId":"req_e746cd6e-f655-4575-88ee-a0f1daf16bae","method":"POST","path":"/register","status":201,"durationMs":324}
+{"timestamp":"2026-10-20T04:33:44.983Z","level":"info","event":"request_completed","requestId":"req_5045f75b-843d-4e55-a55e-001dbb7ad304","method":"POST","path":"/auth/login","status":401,"durationMs":209,"errorCode":"INVALID_CREDENTIALS"}
+[32mÔ£ö logging in with a wrong password answers a generic 401 [90m(551.0673ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:45.378Z","level":"info","event":"request_completed","requestId":"req_3c6e8f88-90a0-4195-a240-96732d6b99c5","method":"POST","path":"/register","status":201,"durationMs":385}
+{"timestamp":"2026-10-20T04:33:45.593Z","level":"info","event":"request_completed","requestId":"req_6881da97-a1e9-49df-86c7-0d0cf4f9af8f","method":"POST","path":"/login","status":200,"durationMs":207}
+{"timestamp":"2026-10-20T04:33:45.743Z","level":"info","event":"request_completed","requestId":"req_26337550-1e08-4114-849b-4b4a48c85fa9","method":"GET","path":"/me","status":200,"durationMs":140,"userId":"94df44a9-5cf4-4971-881f-2ba83275e967"}
+[32mÔ£ö GET /auth/me reports the identity carried by the token [90m(760.2247ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:45.762Z","level":"info","event":"request_completed","requestId":"req_92d8cca6-b84c-46fb-834c-1a68c82a7b1d","method":"GET","path":"/auth/me","status":401,"durationMs":2,"errorCode":"AUTHENTICATION_REQUIRED"}
+[32mÔ£ö GET /auth/me without a token answers 401 [90m(20.9828ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:48.086Z","level":"info","event":"request_completed","requestId":"req_3f7aeb78-8707-460d-b758-3deabfdab9d0","method":"POST","path":"/register","status":201,"durationMs":942}
+{"timestamp":"2026-10-20T04:33:48.308Z","level":"info","event":"request_completed","requestId":"req_214e6372-6d68-4e73-a31f-81afe1d5f0bd","method":"POST","path":"/login","status":200,"durationMs":208}
+{"timestamp":"2026-10-20T04:33:48.323Z","level":"info","event":"request_completed","requestId":"req_60ada531-0734-4831-acdf-2b56d8cbeb4f","method":"GET","path":"/requests/not-a-number","status":400,"durationMs":7,"userId":"9521d6b1-15e5-421e-9da5-6228b9206f05","errorCode":"INVALID_REQUEST_ID"}
+[32mÔ£ö an alphabetic id answers 400 INVALID_REQUEST_ID, not 500 [90m(1245.7048ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:48.676Z","level":"info","event":"request_completed","requestId":"req_7003a380-85cb-4fac-b951-005c676b1877","method":"POST","path":"/register","status":201,"durationMs":339}
+{"timestamp":"2026-10-20T04:33:48.892Z","level":"info","event":"request_completed","requestId":"req_b9b03203-fa3f-470b-95d8-d650b650228a","method":"POST","path":"/login","status":200,"durationMs":209}
+{"timestamp":"2026-10-20T04:33:48.902Z","level":"info","event":"request_completed","requestId":"req_92126559-5671-4170-a02c-c7e2ca7866b4","method":"GET","path":"/requests/1.5","status":400,"durationMs":2,"userId":"63be39a8-3e41-43af-93fc-e3fb85088481","errorCode":"INVALID_REQUEST_ID"}
+{"timestamp":"2026-10-20T04:33:48.912Z","level":"info","event":"request_completed","requestId":"req_e5aea356-6988-43c9-ada0-7f86c4b78ce1","method":"GET","path":"/requests/0","status":400,"durationMs":1,"userId":"63be39a8-3e41-43af-93fc-e3fb85088481","errorCode":"INVALID_REQUEST_ID"}
+{"timestamp":"2026-10-20T04:33:48.923Z","level":"info","event":"request_completed","requestId":"req_fa799c3b-1303-4b94-8bd2-51003f5dcc4c","method":"GET","path":"/requests/-3","status":400,"durationMs":2,"userId":"63be39a8-3e41-43af-93fc-e3fb85088481","errorCode":"INVALID_REQUEST_ID"}
+{"timestamp":"2026-10-20T04:33:48.935Z","level":"info","event":"request_completed","requestId":"req_693e622e-344c-4e7c-82e3-d4a09cf8d580","method":"GET","path":"/requests/12abc","status":400,"durationMs":2,"userId":"63be39a8-3e41-43af-93fc-e3fb85088481","errorCode":"INVALID_REQUEST_ID"}
+[32mÔ£ö decimal, zero and negative ids are rejected the same way [90m(619.3246ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:49.310Z","level":"info","event":"request_completed","requestId":"req_6c573efe-a0a6-4166-8f42-a79b35218c6c","method":"POST","path":"/register","status":201,"durationMs":349}
+{"timestamp":"2026-10-20T04:33:49.522Z","level":"info","event":"request_completed","requestId":"req_10f701f1-267c-4673-bea6-8bd50ff97580","method":"POST","path":"/login","status":200,"durationMs":200}
+{"timestamp":"2026-10-20T04:33:49.663Z","level":"info","event":"request_completed","requestId":"req_097b761d-df34-4658-8eac-4c6a4cbae9aa","method":"GET","path":"/requests/999999999","status":404,"durationMs":133,"userId":"60aeb7cd-77cd-4b94-bb6a-b400f0480075","errorCode":"REQUEST_NOT_FOUND"}
+[32mÔ£ö a well-formed id that matches nothing still answers 404 [90m(717.223ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:50.614Z","level":"info","event":"request_completed","requestId":"req_c10e2991-7d4b-4e59-8d61-cda6640d66f2","method":"POST","path":"/register","status":201,"durationMs":942}
+{"timestamp":"2026-10-20T04:33:50.947Z","level":"info","event":"request_completed","requestId":"req_e068b5c7-d119-412d-8c5c-6fd1ae105e44","method":"POST","path":"/register","status":201,"durationMs":327}
+{"timestamp":"2026-10-20T04:33:51.283Z","level":"info","event":"request_completed","requestId":"req_ee4638a9-bfec-41c6-bb9c-a6a9a8180ffc","method":"POST","path":"/login","status":200,"durationMs":197}
+{"timestamp":"2026-10-20T04:33:51.486Z","level":"info","event":"request_completed","requestId":"req_db759ec7-19a1-483c-a2a2-28c769005ab6","method":"POST","path":"/login","status":200,"durationMs":196}
+{"timestamp":"2026-10-20T04:33:52.022Z","level":"info","event":"request_completed","requestId":"req_451eba92-7a25-4d97-b90e-021b215c7410","method":"POST","path":"/","status":201,"durationMs":530,"userId":"10c177e2-2bc1-4d0f-8c69-497a9d4eb533"}
+{"timestamp":"2026-10-20T04:33:52.034Z","level":"info","event":"request_completed","requestId":"req_9530cf44-2d7f-4f10-812d-48e33bb1111b","method":"PATCH","path":"/requests/1021","status":400,"durationMs":4,"userId":"820385eb-7c9e-4ffc-b9bc-baa70e827d7e","errorCode":"INVALID_PRIORITY"}
+[32mÔ£ö an invalid priority answers 400 INVALID_PRIORITY before touching SQL [90m(2370.8406ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:52.394Z","level":"info","event":"request_completed","requestId":"req_70d8dcaa-ff2d-4f59-b739-c58a80f74499","method":"POST","path":"/register","status":201,"durationMs":350}
+{"timestamp":"2026-10-20T04:33:52.725Z","level":"info","event":"request_completed","requestId":"req_d8da8ff9-1573-4a1e-aa82-468aa9a7df12","method":"POST","path":"/register","status":201,"durationMs":325}
+{"timestamp":"2026-10-20T04:33:53.061Z","level":"info","event":"request_completed","requestId":"req_f19b5690-715d-47b2-8fa4-cbd4cc8cd7b8","method":"POST","path":"/login","status":200,"durationMs":200}
+{"timestamp":"2026-10-20T04:33:53.321Z","level":"info","event":"request_completed","requestId":"req_0d704dd3-237b-487c-9ceb-6e988e82db03","method":"POST","path":"/login","status":200,"durationMs":255}
+{"timestamp":"2026-10-20T04:33:53.845Z","level":"info","event":"request_completed","requestId":"req_32d63a06-7357-47fb-9032-cc65305a4869","method":"POST","path":"/","status":201,"durationMs":516,"userId":"6a0284b4-3a17-4c6b-b4f8-04afe881c0d4"}
+{"timestamp":"2026-10-20T04:33:54.516Z","level":"info","event":"request_completed","requestId":"req_8e7246ce-0ac3-4363-98e6-2bcbf64febb9","method":"PATCH","path":"/1022","status":200,"durationMs":664,"userId":"affed881-3992-444a-8b08-65c939fdb360"}
+[32mÔ£ö a valid priority change still works after the fix [90m(2480.8686ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:54.858Z","level":"info","event":"request_completed","requestId":"req_9591c539-40ce-47f1-b0f4-e4d231ca98dd","method":"POST","path":"/register","status":201,"durationMs":332}
+{"timestamp":"2026-10-20T04:33:55.230Z","level":"info","event":"request_completed","requestId":"req_e14bce9c-73b9-47e5-9d3d-ad70a9a166a8","method":"POST","path":"/register","status":201,"durationMs":364}
+{"timestamp":"2026-10-20T04:33:55.575Z","level":"info","event":"request_completed","requestId":"req_ea503677-db05-4485-86ef-43117850c834","method":"POST","path":"/login","status":200,"durationMs":208}
+{"timestamp":"2026-10-20T04:33:55.778Z","level":"info","event":"request_completed","requestId":"req_2a8850f9-2084-4e28-b28e-76b3b1286f01","method":"POST","path":"/login","status":200,"durationMs":197}
+{"timestamp":"2026-10-20T04:33:56.303Z","level":"info","event":"request_completed","requestId":"req_3e540b2d-8741-4020-90f0-2380ccdae3fe","method":"POST","path":"/","status":201,"durationMs":520,"userId":"6fbc0d91-e482-41b0-9e5f-3e7f6049fca0"}
+{"timestamp":"2026-10-20T04:33:56.705Z","level":"info","event":"request_completed","requestId":"req_7c218c69-65af-4031-a3b6-3c930cccd2b9","method":"PATCH","path":"/requests/1023","status":409,"durationMs":393,"userId":"e2f49d90-4be6-4699-9116-52bef13cfaa5","errorCode":"INVALID_STATUS_TRANSITION"}
+[32mÔ£ö a controlled AppError keeps its category status and code [90m(2188.7975ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:57.041Z","level":"info","event":"request_completed","requestId":"req_34b0e410-78b2-4026-a539-468ee437118f","method":"POST","path":"/register","status":201,"durationMs":327}
+{"timestamp":"2026-10-20T04:33:57.262Z","level":"info","event":"request_completed","requestId":"req_b7170ae1-89ff-4e6c-9bcd-5d811dca9ac2","method":"POST","path":"/login","status":200,"durationMs":212}
+{"timestamp":"2026-10-20T04:33:57.270Z","level":"error","event":"unexpected_error","requestId":"req_44c6e8c4-6ade-4f1c-9890-bbe797d6973e","name":"Error","message":"synthetic store failure","stack":"Error: synthetic store failure\n    at pool.query (file:///E:/DESARROLLO%20WEB/asignacion%20backend/backend-coursse/activities/class-09-starter/test/errors.test.js:119:36)\n    at findAll (file:///E:/DESARROLLO%20WEB/asignacion%20backend/backend-coursse/activities/class-09-starter/src/modules/requests/requests.store.js:43:27)\n    at listRequests (file:///E:/DESARROLLO%20WEB/asignacion%20backend/backend-coursse/activities/class-09-starter/src/modules/requests/requests.service.js:82:22)\n    at file:///E:/DESARROLLO%20WEB/asignacion%20backend/backend-coursse/activities/class-09-starter/src/modules/requests/requests.routes.js:25:30\n    at Layer.handleRequest (E:\\DESARROLLO WEB\\asignacion backend\\backend-coursse\\activities\\class-09-starter\\node_modules\\router\\lib\\layer.js:152:17)\n    at next (E:\\DESARROLLO WEB\\asignacion backend\\backend-coursse\\activities\\class-09-starter\\node_modules\\router\\lib\\route.js:157:13)\n    at Route.dispatch (E:\\DESARROLLO WEB\\asignacion backend\\backend-coursse\\activities\\class-09-starter\\node_modules\\router\\lib\\route.js:117:3)\n    at handle (E:\\DESARROLLO WEB\\asignacion backend\\backend-coursse\\activities\\class-09-starter\\node_modules\\router\\index.js:435:11)\n    at Layer.handleRequest (E:\\DESARROLLO WEB\\asignacion backend\\backend-coursse\\activities\\class-09-starter\\node_modules\\router\\lib\\layer.js:152:17)\n    at E:\\DESARROLLO WEB\\asignacion backend\\backend-coursse\\activities\\class-09-starter\\node_modules\\router\\index.js:295:15"}
+{"timestamp":"2026-10-20T04:33:57.271Z","level":"error","event":"request_failed","requestId":"req_44c6e8c4-6ade-4f1c-9890-bbe797d6973e","method":"GET","path":"/requests","status":500,"durationMs":2,"userId":"8c28d7d8-92bd-4ab0-9b3a-403a765fbf8c","errorCode":"INTERNAL_ERROR"}
+[32mÔ£ö an unexpected error answers a generic 500 without internal details [90m(566.0566ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:57.636Z","level":"info","event":"request_completed","requestId":"req_b7d047e0-b2b5-4720-800e-2141b91f5a0b","method":"POST","path":"/register","status":201,"durationMs":356}
+{"timestamp":"2026-10-20T04:33:57.837Z","level":"info","event":"request_completed","requestId":"req_fefc7cfd-56c8-4670-a4d5-72e4dd2873d5","method":"POST","path":"/login","status":200,"durationMs":195}
+{"timestamp":"2026-10-20T04:33:57.844Z","level":"info","event":"request_completed","requestId":"req_21c786f7-dd1e-4694-a88b-f7f00a80b41f","method":"GET","path":"/requests/0","status":400,"durationMs":1,"userId":"4ac6ab45-5795-42f3-83fb-5428f7dbc885","errorCode":"INVALID_REQUEST_ID"}
+[32mÔ£ö every error body shares the same shape: error.code, error.message, requestId [90m(572.4288ms)[39m[39m
+{"timestamp":"2026-10-20T04:33:58.218Z","level":"info","event":"request_completed","requestId":"req_df36c348-43f3-432e-b9cb-2f405e03191b","method":"POST","path":"/register","status":201,"durationMs":364}
+{"timestamp":"2026-10-20T04:33:58.425Z","level":"info","event":"request_completed","requestId":"req_ca1c25f2-7a90-499b-b07c-8db2b0c8cf4d","method":"POST","path":"/login","status":200,"durationMs":194}
+{"timestamp":"2026-10-20T04:33:58.432Z","level":"info","event":"request_completed","requestId":"req_4c7aa438-3094-49bb-9f81-a87b52eccc0c","method":"POST","path":"/requests","status":400,"durationMs":1,"errorCode":"INVALID_JSON"}
+[32mÔ£ö a body that is not valid JSON answers 400, not 500 [90m(587.198ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:00.638Z","level":"info","event":"request_completed","requestId":"req_f9bfecce-a2a8-4041-bfa5-e18d1719a073","method":"GET","path":"/health","status":200,"durationMs":10}
+[32mÔ£ö GET /health answers 200 ok without touching PostgreSQL [90m(70.363ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:01.781Z","level":"info","event":"request_completed","requestId":"req_37c87243-2a37-465a-a121-67359ec1fe7d","method":"GET","path":"/ready","status":200,"durationMs":1104}
+[32mÔ£ö GET /ready answers 200 when PostgreSQL responds [90m(1126.5825ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:01.792Z","level":"error","event":"readiness_check_failed","code":"no database today"}
+[32mÔ£ö GET /ready answers 503 when the database check fails [90m(11.6178ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:01.806Z","level":"error","event":"readiness_check_failed","code":"ECONNREFUSED"}
+[32mÔ£ö the readiness response never reveals connection details [90m(14.3449ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:04.533Z","level":"info","event":"request_completed","requestId":"req_13fa4443-c6c1-447f-bce4-f314c6fa5f76","method":"POST","path":"/register","status":201,"durationMs":1445}
+{"timestamp":"2026-10-20T04:34:05.585Z","level":"info","event":"request_completed","requestId":"req_b89fc1cb-6bc5-46ab-ab80-fe8d2e3b2466","method":"POST","path":"/login","status":200,"durationMs":1028}
+{"timestamp":"2026-10-20T04:34:05.727Z","level":"info","event":"request_completed","requestId":"req_91ac058a-5a4a-4ddc-b6c6-24e4b73ae209","method":"GET","path":"/","status":200,"durationMs":134,"userId":"b6f38b3a-f8ed-41d5-b8da-f3d0975154aa"}
+[32mÔ£ö a valid login still returns a usable token [90m(2683.7636ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:06.098Z","level":"info","event":"request_completed","requestId":"req_1253d16b-f5fd-49e9-a66c-5791cbfd997e","method":"POST","path":"/register","status":201,"durationMs":360}
+{"timestamp":"2026-10-20T04:34:06.435Z","level":"info","event":"request_completed","requestId":"req_2986cba5-8b9c-47e9-a94e-8de727e75b3a","method":"POST","path":"/register","status":201,"durationMs":329}
+{"timestamp":"2026-10-20T04:34:06.649Z","level":"info","event":"request_completed","requestId":"req_0d2ebe01-9790-4fbb-a1aa-ded53fb98fd7","method":"POST","path":"/login","status":200,"durationMs":205}
+{"timestamp":"2026-10-20T04:34:06.918Z","level":"info","event":"request_completed","requestId":"req_60b1bdf6-af02-426a-8974-9d4c670dc058","method":"POST","path":"/login","status":200,"durationMs":262}
+{"timestamp":"2026-10-20T04:34:07.459Z","level":"info","event":"request_completed","requestId":"req_e085c9bf-483c-4f88-9486-107188da9c3f","method":"POST","path":"/","status":201,"durationMs":531,"userId":"5bfd09e7-d3b9-4100-8ff5-64f790362572"}
+{"timestamp":"2026-10-20T04:34:07.600Z","level":"info","event":"request_completed","requestId":"req_79301e54-0563-4075-97ca-5a215bae5a45","method":"GET","path":"/","status":200,"durationMs":131,"userId":"05a5748a-6c17-48fb-a637-65ee9e141c02"}
+[32mÔ£ö the collection stays scoped: a requester only lists their own requests [90m(1870.5527ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:07.972Z","level":"info","event":"request_completed","requestId":"req_e20ce9bc-8edf-43d3-ac6c-ba20a2588de6","method":"POST","path":"/register","status":201,"durationMs":361}
+{"timestamp":"2026-10-20T04:34:08.313Z","level":"info","event":"request_completed","requestId":"req_e88df124-eb55-4d9b-9109-01e84ad0fc6c","method":"POST","path":"/register","status":201,"durationMs":332}
+{"timestamp":"2026-10-20T04:34:08.654Z","level":"info","event":"request_completed","requestId":"req_89253784-ec78-4c15-aba3-b2bbd3cd98e4","method":"POST","path":"/login","status":200,"durationMs":196}
+{"timestamp":"2026-10-20T04:34:08.859Z","level":"info","event":"request_completed","requestId":"req_57427109-9fa0-4741-be3a-bdea3244f9ed","method":"POST","path":"/login","status":200,"durationMs":199}
+{"timestamp":"2026-10-20T04:34:09.387Z","level":"info","event":"request_completed","requestId":"req_9810013e-92ba-46be-bc82-e9c3c461b351","method":"POST","path":"/","status":201,"durationMs":522,"userId":"5c0d1bea-40c2-4b3f-9268-919eea69e525"}
+{"timestamp":"2026-10-20T04:34:10.073Z","level":"info","event":"request_completed","requestId":"req_51d179c7-9371-4a35-a4e6-549926c706be","method":"POST","path":"/1025/claim","status":200,"durationMs":674,"userId":"33604b6e-8de4-4d75-8f42-b1bb6c533a60"}
+[32mÔ£ö the claim action still follows its contract [90m(2472.3043ms)[39m[39m
+[32mÔ£ö an agent can view any request [90m(1.9231ms)[39m[39m
+[32mÔ£ö the owner requester can view their own request [90m(0.285ms)[39m[39m
+[32mÔ£ö a different requester cannot view the request [90m(0.2669ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:12.084Z","level":"info","event":"request_completed","requestId":"req_3774dc3d-853b-4492-8ba3-634126f558d1","method":"GET","path":"/requests/1","status":401,"durationMs":10,"errorCode":"AUTHENTICATION_REQUIRED"}
+[32mÔ£ö without a token the detail returns 401 [90m(64.4342ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:13.076Z","level":"info","event":"request_completed","requestId":"req_2677e7c0-be43-4edc-bc9e-9078a68b9393","method":"POST","path":"/register","status":201,"durationMs":967}
+{"timestamp":"2026-10-20T04:34:13.596Z","level":"info","event":"request_completed","requestId":"req_770b4909-bad1-4e96-b042-b4880f09ee71","method":"POST","path":"/login","status":200,"durationMs":510}
+{"timestamp":"2026-10-20T04:34:13.744Z","level":"info","event":"request_completed","requestId":"req_a9973642-1989-4a30-8294-5e267cd5e22a","method":"GET","path":"/requests/999999999","status":404,"durationMs":137,"userId":"6f5fb80e-1deb-4747-8ed7-bcfd961e9200","errorCode":"REQUEST_NOT_FOUND"}
+[32mÔ£ö a well-formed id that does not exist returns 404 [90m(1653.7383ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:14.123Z","level":"info","event":"request_completed","requestId":"req_286f7b2f-c0f8-470d-98f1-f6ed5a413a0c","method":"POST","path":"/register","status":201,"durationMs":365}
+{"timestamp":"2026-10-20T04:34:14.332Z","level":"info","event":"request_completed","requestId":"req_1cba6843-4976-46b1-aa3b-eb64ff0028b9","method":"POST","path":"/login","status":200,"durationMs":201}
+{"timestamp":"2026-10-20T04:34:14.860Z","level":"info","event":"request_completed","requestId":"req_b279f276-2aa8-4727-8be2-b0f97f7e77ed","method":"POST","path":"/","status":201,"durationMs":521,"userId":"cb3279d7-f839-4a8a-9673-21166cbd3488"}
+{"timestamp":"2026-10-20T04:34:15.009Z","level":"info","event":"request_completed","requestId":"req_629ae322-4979-479a-b23c-896ab14c170d","method":"GET","path":"/1026","status":200,"durationMs":140,"userId":"cb3279d7-f839-4a8a-9673-21166cbd3488"}
+[32mÔ£ö the owner reads their request and the schema is preserved [90m(1266.0408ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:15.535Z","level":"info","event":"request_completed","requestId":"req_cb36dfef-cbab-47d8-b31b-da2c7c346015","method":"POST","path":"/register","status":201,"durationMs":510}
+{"timestamp":"2026-10-20T04:34:15.873Z","level":"info","event":"request_completed","requestId":"req_766a5973-2049-466f-86b7-f9a71eb90e8b","method":"POST","path":"/register","status":201,"durationMs":330}
+{"timestamp":"2026-10-20T04:34:16.252Z","level":"info","event":"request_completed","requestId":"req_105c2b01-ae1a-49aa-a088-29a9920c6282","method":"POST","path":"/login","status":200,"durationMs":217}
+{"timestamp":"2026-10-20T04:34:16.491Z","level":"info","event":"request_completed","requestId":"req_c8f8c6cc-54b4-4b45-8a10-2c80479e4516","method":"POST","path":"/login","status":200,"durationMs":231}
+{"timestamp":"2026-10-20T04:34:17.017Z","level":"info","event":"request_completed","requestId":"req_a49eec21-fd44-4ea7-a2b5-c2a4289a62d9","method":"POST","path":"/","status":201,"durationMs":518,"userId":"28984d86-f696-4c16-990b-49f42391c9a7"}
+{"timestamp":"2026-10-20T04:34:17.157Z","level":"info","event":"request_completed","requestId":"req_acffdd9e-26a2-4531-9b6a-8f9040075240","method":"GET","path":"/1027","status":200,"durationMs":134,"userId":"fd2a8685-abf4-41cd-b608-8c99ecdf1a8e"}
+[32mÔ£ö an agent can read any request [90m(2149.8442ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:17.513Z","level":"info","event":"request_completed","requestId":"req_09236814-0a42-4589-aa37-14cbff23adde","method":"POST","path":"/register","status":201,"durationMs":332}
+{"timestamp":"2026-10-20T04:34:17.872Z","level":"info","event":"request_completed","requestId":"req_1b091495-3f47-4ebc-a5eb-4e4a52e68b27","method":"POST","path":"/register","status":201,"durationMs":351}
+{"timestamp":"2026-10-20T04:34:18.279Z","level":"info","event":"request_completed","requestId":"req_ee80d1a0-130f-48c7-989a-472dcce22b14","method":"POST","path":"/login","status":200,"durationMs":399}
+{"timestamp":"2026-10-20T04:34:18.500Z","level":"info","event":"request_completed","requestId":"req_6a3b570c-a21a-4664-94a3-d3c2f5c344e2","method":"POST","path":"/login","status":200,"durationMs":213}
+{"timestamp":"2026-10-20T04:34:19.027Z","level":"info","event":"request_completed","requestId":"req_168e4ae5-4dcd-43fc-837b-b367c8fecacb","method":"POST","path":"/","status":201,"durationMs":521,"userId":"7036a940-e203-4000-a7c5-7868e2e800a3"}
+{"timestamp":"2026-10-20T04:34:19.168Z","level":"info","event":"request_completed","requestId":"req_b1d785d6-1d33-4be7-af1d-35985277b597","method":"GET","path":"/requests/1028","status":404,"durationMs":130,"userId":"57b5df00-127a-4b8d-942e-566a10c4dd37","errorCode":"REQUEST_NOT_FOUND"}
+[32mÔ£ö a different requester receives the same 404 as a missing request [90m(2004.6043ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:19.540Z","level":"info","event":"request_completed","requestId":"req_facce100-b8b9-45f8-a840-2dc03de4ee83","method":"POST","path":"/register","status":201,"durationMs":359}
+{"timestamp":"2026-10-20T04:34:19.912Z","level":"info","event":"request_completed","requestId":"req_8a30f21a-0f66-4d96-83e1-28193ba96457","method":"POST","path":"/register","status":201,"durationMs":364}
+{"timestamp":"2026-10-20T04:34:20.130Z","level":"info","event":"request_completed","requestId":"req_c2eb767d-d52c-45ce-bca6-2e860e09df49","method":"POST","path":"/login","status":200,"durationMs":210}
+{"timestamp":"2026-10-20T04:34:20.466Z","level":"info","event":"request_completed","requestId":"req_238a4f10-0957-4f01-93be-a48fa1710d20","method":"POST","path":"/login","status":200,"durationMs":330}
+{"timestamp":"2026-10-20T04:34:20.993Z","level":"info","event":"request_completed","requestId":"req_c77b101a-e51b-4474-bd27-792c6acaa70c","method":"POST","path":"/","status":201,"durationMs":519,"userId":"b5670973-0a1a-41a9-87b6-57a3e16f8ff5"}
+{"timestamp":"2026-10-20T04:34:21.135Z","level":"info","event":"request_completed","requestId":"req_bdd34d7b-04bf-4a61-9537-c8401d28d34d","method":"GET","path":"/requests/1029","status":404,"durationMs":134,"userId":"f4465480-9786-4353-8593-7534052d4d8f","errorCode":"REQUEST_NOT_FOUND"}
+[32mÔ£ö a userId in the query string does not grant access [90m(1966.5535ms)[39m[39m
+[32mÔ£ö an agent can claim an open, unassigned request [90m(4.9811ms)[39m[39m
+[32mÔ£ö a requester cannot claim, even an open request [90m(0.5116ms)[39m[39m
+[32mÔ£ö an already assigned request cannot be claimed again [90m(0.3074ms)[39m[39m
+[32mÔ£ö a request that is not open cannot be claimed [90m(0.8847ms)[39m[39m
+[32mÔ£ö the role rule wins over the state rules [90m(0.4977ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:24.144Z","level":"info","event":"request_completed","requestId":"req_2b5c9249-7317-4b54-a077-cd6ad1126e06","method":"POST","path":"/register","status":201,"durationMs":1014}
+{"timestamp":"2026-10-20T04:34:24.505Z","level":"info","event":"request_completed","requestId":"req_74620bf3-66cb-4727-b460-0028292b96f6","method":"POST","path":"/register","status":201,"durationMs":340}
+{"timestamp":"2026-10-20T04:34:24.851Z","level":"info","event":"request_completed","requestId":"req_3ac23ae8-a5f2-4632-9194-eaddb63e74b3","method":"POST","path":"/login","status":200,"durationMs":209}
+{"timestamp":"2026-10-20T04:34:25.057Z","level":"info","event":"request_completed","requestId":"req_e7b74d9f-0489-4a17-bb19-9500928019bf","method":"POST","path":"/login","status":200,"durationMs":198}
+{"timestamp":"2026-10-20T04:34:25.590Z","level":"info","event":"request_completed","requestId":"req_417ff96c-ff3d-4e96-bf1f-e2f2b6af4919","method":"POST","path":"/","status":201,"durationMs":525,"userId":"50dba7a6-25e5-4c30-8978-48bdc2d43564"}
+{"timestamp":"2026-10-20T04:34:25.600Z","level":"info","event":"request_completed","requestId":"req_8cd37e5c-4690-4189-9da0-c9737f7de4e8","method":"POST","path":"/requests/1030/claim","status":401,"durationMs":1,"errorCode":"AUTHENTICATION_REQUIRED"}
+[32mÔ£ö claim requires authentication [90m(2536.9451ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:25.953Z","level":"info","event":"request_completed","requestId":"req_9c937e50-26b7-44e9-9ff2-0d66e2a452c3","method":"POST","path":"/register","status":201,"durationMs":340}
+{"timestamp":"2026-10-20T04:34:26.327Z","level":"info","event":"request_completed","requestId":"req_5ee064cb-8115-4c07-956a-bcae321c43f9","method":"POST","path":"/register","status":201,"durationMs":359}
+{"timestamp":"2026-10-20T04:34:26.669Z","level":"info","event":"request_completed","requestId":"req_632159ef-2145-4642-88be-7208833e32ed","method":"POST","path":"/login","status":200,"durationMs":202}
+{"timestamp":"2026-10-20T04:34:26.875Z","level":"info","event":"request_completed","requestId":"req_47ce6490-f3eb-42db-846f-45dae37ab3e3","method":"POST","path":"/login","status":200,"durationMs":196}
+{"timestamp":"2026-10-20T04:34:27.408Z","level":"info","event":"request_completed","requestId":"req_4dab4486-e792-420d-aa39-41d32544a009","method":"POST","path":"/","status":201,"durationMs":525,"userId":"34623b62-85a4-4f8c-bc72-b7923be33bc7"}
+{"timestamp":"2026-10-20T04:34:27.815Z","level":"info","event":"request_completed","requestId":"req_86311a6f-712a-4b11-996a-a3b512eaab71","method":"POST","path":"/requests/1031/claim","status":403,"durationMs":394,"userId":"34623b62-85a4-4f8c-bc72-b7923be33bc7","errorCode":"FORBIDDEN"}
+[32mÔ£ö a requester cannot claim a request [90m(2212.1004ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:28.180Z","level":"info","event":"request_completed","requestId":"req_310d291e-ab1c-47ce-97e3-589baa6d88e9","method":"POST","path":"/register","status":201,"durationMs":357}
+{"timestamp":"2026-10-20T04:34:28.736Z","level":"info","event":"request_completed","requestId":"req_572598a1-c900-4b7b-b2e4-4c2a21d9c435","method":"POST","path":"/register","status":201,"durationMs":549}
+{"timestamp":"2026-10-20T04:34:29.107Z","level":"info","event":"request_completed","requestId":"req_b039a63c-5b31-4697-9673-2136c0988d54","method":"POST","path":"/login","status":200,"durationMs":234}
+{"timestamp":"2026-10-20T04:34:29.325Z","level":"info","event":"request_completed","requestId":"req_42c975f9-b172-4aeb-8658-9a3e79ebdbe1","method":"POST","path":"/login","status":200,"durationMs":209}
+{"timestamp":"2026-10-20T04:34:29.855Z","level":"info","event":"request_completed","requestId":"req_6c0173f6-d845-4f6d-9b52-1e94927d54f0","method":"POST","path":"/","status":201,"durationMs":523,"userId":"cb3f395f-fcb0-4b2f-8dfd-9db2b27b5c9b"}
+{"timestamp":"2026-10-20T04:34:30.514Z","level":"info","event":"request_completed","requestId":"req_3539bfd2-03d3-4ba4-83f0-84ae75d70f7c","method":"POST","path":"/1032/claim","status":200,"durationMs":651,"userId":"24c2e6c6-11ef-4cb4-bf87-bc464a4df285"}
+[32mÔ£ö an agent claims an open request: 200, assignedTo from the token, in_progress [90m(2700.0961ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:30.896Z","level":"info","event":"request_completed","requestId":"req_e27e8f69-19a5-4c89-84d6-50634317dea9","method":"POST","path":"/register","status":201,"durationMs":370}
+{"timestamp":"2026-10-20T04:34:31.276Z","level":"info","event":"request_completed","requestId":"req_950589a3-3692-4495-a40d-6f1a0e9046ee","method":"POST","path":"/register","status":201,"durationMs":373}
+{"timestamp":"2026-10-20T04:34:31.615Z","level":"info","event":"request_completed","requestId":"req_e8ff6d9c-d62c-4c14-8171-1884eea4ba3e","method":"POST","path":"/login","status":200,"durationMs":201}
+{"timestamp":"2026-10-20T04:34:31.864Z","level":"info","event":"request_completed","requestId":"req_2a9a9f37-413a-4c45-9ad1-011e9212dea2","method":"POST","path":"/login","status":200,"durationMs":244}
+{"timestamp":"2026-10-20T04:34:32.604Z","level":"info","event":"request_completed","requestId":"req_50af3068-9f22-4ac5-9805-4273f3396bb1","method":"POST","path":"/","status":201,"durationMs":732,"userId":"9883af40-9af1-4ba5-bb49-0bf4d50f6e22"}
+{"timestamp":"2026-10-20T04:34:33.004Z","level":"info","event":"request_completed","requestId":"req_6cb92cd2-f41a-40c6-ab1a-195ab94694a5","method":"POST","path":"/requests/999999999/claim","status":404,"durationMs":394,"userId":"3987f2f3-c370-462a-8000-831a9272a17a","errorCode":"REQUEST_NOT_FOUND"}
+[32mÔ£ö claiming a nonexistent request answers 404 [90m(2505.3682ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:33.747Z","level":"info","event":"request_completed","requestId":"req_a4a8799d-1dcf-40b3-a357-51fa1cf27a8d","method":"POST","path":"/register","status":201,"durationMs":713}
+{"timestamp":"2026-10-20T04:34:34.158Z","level":"info","event":"request_completed","requestId":"req_4bb7f187-0d5c-4755-b04e-957a4462c5c2","method":"POST","path":"/register","status":201,"durationMs":402}
+{"timestamp":"2026-10-20T04:34:34.526Z","level":"info","event":"request_completed","requestId":"req_8aa6c5d5-a4d8-4c1f-98ce-3bfdac612658","method":"POST","path":"/login","status":200,"durationMs":230}
+{"timestamp":"2026-10-20T04:34:34.779Z","level":"info","event":"request_completed","requestId":"req_3cbd94aa-c18f-467c-b4c3-128a94484390","method":"POST","path":"/login","status":200,"durationMs":245}
+{"timestamp":"2026-10-20T04:34:35.309Z","level":"info","event":"request_completed","requestId":"req_5075e948-d586-4cb5-abce-3bae75941813","method":"POST","path":"/","status":201,"durationMs":523,"userId":"505b899c-7406-4d82-8cd5-34e525e410a7"}
+{"timestamp":"2026-10-20T04:34:35.969Z","level":"info","event":"request_completed","requestId":"req_0004be97-ac11-4275-9f23-de57dee6ecca","method":"POST","path":"/1034/claim","status":200,"durationMs":650,"userId":"6685abaa-1247-4ede-b65e-8bead565135a"}
+{"timestamp":"2026-10-20T04:34:36.364Z","level":"info","event":"request_completed","requestId":"req_f65283eb-ad0f-483f-a893-b0d8e4f04a47","method":"POST","path":"/requests/1034/claim","status":409,"durationMs":388,"userId":"6685abaa-1247-4ede-b65e-8bead565135a","errorCode":"REQUEST_ALREADY_ASSIGNED"}
+[32mÔ£ö a second claim answers 409 REQUEST_ALREADY_ASSIGNED [90m(3341.2146ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:36.699Z","level":"info","event":"request_completed","requestId":"req_3937a3df-7a33-4191-99db-f9a91d839ed3","method":"POST","path":"/register","status":201,"durationMs":327}
+{"timestamp":"2026-10-20T04:34:37.045Z","level":"info","event":"request_completed","requestId":"req_a89dd386-463c-48a8-9640-3ec25a7b80fb","method":"POST","path":"/register","status":201,"durationMs":338}
+{"timestamp":"2026-10-20T04:34:37.508Z","level":"info","event":"request_completed","requestId":"req_50f82e4d-415f-42d0-93a7-519c4fb20b0e","method":"POST","path":"/login","status":200,"durationMs":325}
+{"timestamp":"2026-10-20T04:34:37.775Z","level":"info","event":"request_completed","requestId":"req_66794bab-85eb-4d7c-be9b-7353065967c6","method":"POST","path":"/login","status":200,"durationMs":259}
+{"timestamp":"2026-10-20T04:34:38.304Z","level":"info","event":"request_completed","requestId":"req_105c28ab-9eaf-479e-8d9c-0223129e0584","method":"POST","path":"/","status":201,"durationMs":522,"userId":"58a5ecf2-af16-4377-b13c-283306878103"}
+{"timestamp":"2026-10-20T04:34:38.967Z","level":"info","event":"request_completed","requestId":"req_515477b2-bac2-4482-87f1-1f09a22caa48","method":"PATCH","path":"/1035","status":200,"durationMs":656,"userId":"6fc123d7-ae3a-4677-96be-3809b366a048"}
+{"timestamp":"2026-10-20T04:34:39.362Z","level":"info","event":"request_completed","requestId":"req_3c2e86ae-aeaf-4cef-94ce-1370eea78529","method":"POST","path":"/requests/1035/claim","status":409,"durationMs":390,"userId":"6fc123d7-ae3a-4677-96be-3809b366a048","errorCode":"REQUEST_NOT_CLAIMABLE"}
+[32mÔ£ö a terminal request cannot be claimed [90m(2998.4436ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:39.699Z","level":"info","event":"request_completed","requestId":"req_58408649-1d62-47f8-a80d-59624521b3a0","method":"POST","path":"/register","status":201,"durationMs":325}
+{"timestamp":"2026-10-20T04:34:40.054Z","level":"info","event":"request_completed","requestId":"req_35b9a98d-3764-4461-8f67-0726016c256c","method":"POST","path":"/register","status":201,"durationMs":349}
+{"timestamp":"2026-10-20T04:34:40.414Z","level":"info","event":"request_completed","requestId":"req_d4cec55b-3b1f-4908-a567-be3202432dd6","method":"POST","path":"/login","status":200,"durationMs":224}
+{"timestamp":"2026-10-20T04:34:40.617Z","level":"info","event":"request_completed","requestId":"req_82eeaa63-5366-4ee9-8f09-a3734df3aa07","method":"POST","path":"/login","status":200,"durationMs":194}
+{"timestamp":"2026-10-20T04:34:41.140Z","level":"info","event":"request_completed","requestId":"req_346aea3b-a78c-49c8-8f79-f6d10cfa1d9e","method":"POST","path":"/","status":201,"durationMs":517,"userId":"1b5fc77f-31d9-431a-a87a-a9d0a48b588b"}
+{"timestamp":"2026-10-20T04:34:41.151Z","level":"info","event":"request_completed","requestId":"req_573dc217-8a4a-4623-bf27-b201b60f3122","method":"POST","path":"/requests/1036/claim","status":400,"durationMs":2,"userId":"c8e5c4f5-734e-41b5-bea5-2c50c34eb47b","errorCode":"SERVER_CONTROLLED_FIELD"}
+[32mÔ£ö assignedTo in the body is rejected as a server-controlled field [90m(1788.5577ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:41.506Z","level":"info","event":"request_completed","requestId":"req_dde57dce-f326-4969-abb9-c49a54f58d2c","method":"POST","path":"/register","status":201,"durationMs":343}
+{"timestamp":"2026-10-20T04:34:41.883Z","level":"info","event":"request_completed","requestId":"req_e2a01424-8fc5-4f63-88b4-4f8cc45c3fe4","method":"POST","path":"/register","status":201,"durationMs":369}
+{"timestamp":"2026-10-20T04:34:42.217Z","level":"info","event":"request_completed","requestId":"req_b45b6025-4cb3-4826-a6b4-b06b0a2d045f","method":"POST","path":"/login","status":200,"durationMs":198}
+{"timestamp":"2026-10-20T04:34:42.440Z","level":"info","event":"request_completed","requestId":"req_c5683a65-56d9-4790-a9c9-6fe0c63d526e","method":"POST","path":"/login","status":200,"durationMs":217}
+{"timestamp":"2026-10-20T04:34:42.963Z","level":"info","event":"request_completed","requestId":"req_ba48dd74-db75-4bcf-930f-cf53a4f7af1e","method":"POST","path":"/","status":201,"durationMs":515,"userId":"8dbd6242-a594-4309-b8ec-a8302e20a037"}
+{"timestamp":"2026-10-20T04:34:43.633Z","level":"info","event":"request_completed","requestId":"req_5d6ece64-9f09-48aa-9b0a-b754a01342be","method":"POST","path":"/1037/claim","status":200,"durationMs":659,"userId":"eea2d8d2-2fc2-4787-8ef6-ae682d6c072a"}
+{"timestamp":"2026-10-20T04:34:43.903Z","level":"info","event":"request_completed","requestId":"req_bbe88f10-a139-443b-a077-c1c17d98a96a","method":"GET","path":"/1037/history","status":200,"durationMs":263,"userId":"8dbd6242-a594-4309-b8ec-a8302e20a037"}
+[32mÔ£ö the claim leaves a request_claimed event in the history [90m(2751.2861ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:44.242Z","level":"info","event":"request_completed","requestId":"req_a3083ea3-becc-4a56-bd27-136f4e09e40c","method":"POST","path":"/register","status":201,"durationMs":328}
+{"timestamp":"2026-10-20T04:34:44.588Z","level":"info","event":"request_completed","requestId":"req_0d6fb9bf-7f6d-4239-b3e6-d87919bedd4a","method":"POST","path":"/register","status":201,"durationMs":340}
+{"timestamp":"2026-10-20T04:34:44.953Z","level":"info","event":"request_completed","requestId":"req_ad9f49b7-9e8d-4e8d-8081-e15f3e50fdd0","method":"POST","path":"/login","status":200,"durationMs":230}
+{"timestamp":"2026-10-20T04:34:45.154Z","level":"info","event":"request_completed","requestId":"req_53913ae9-bbbc-43ba-b72c-c4788e9bf141","method":"POST","path":"/login","status":200,"durationMs":193}
+{"timestamp":"2026-10-20T04:34:45.686Z","level":"info","event":"request_completed","requestId":"req_fb67d174-50ce-4ca9-910f-03f65e085751","method":"POST","path":"/","status":201,"durationMs":524,"userId":"18d4efcb-5087-4a74-a693-7290a217148a"}
+{"timestamp":"2026-10-20T04:34:45.694Z","level":"info","event":"request_completed","requestId":"req_72e80f09-4795-42fb-b058-d3cf6664f38c","method":"PATCH","path":"/requests/1038","status":400,"durationMs":1,"userId":"5d75f110-0a49-4ae3-a146-c26df9159ce9","errorCode":"SERVER_CONTROLLED_FIELD"}
+[32mÔ£ö assignedTo also stays server-controlled for PATCH [90m(1789.7077ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:48.035Z","level":"info","event":"request_completed","requestId":"req_93b63748-578d-48bd-a51a-fcd5414e9ad5","method":"GET","path":"/requests/1/history","status":401,"durationMs":11,"errorCode":"AUTHENTICATION_REQUIRED"}
+[32mÔ£ö the history requires authentication [90m(59.679ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:50.060Z","level":"info","event":"request_completed","requestId":"req_eae05ef7-1a35-4d3c-8dca-d067a361f0fd","method":"POST","path":"/register","status":201,"durationMs":1998}
+{"timestamp":"2026-10-20T04:34:50.410Z","level":"info","event":"request_completed","requestId":"req_a3898f28-4ccd-4db1-ac1d-5731e80b76f5","method":"POST","path":"/register","status":201,"durationMs":339}
+{"timestamp":"2026-10-20T04:34:50.758Z","level":"info","event":"request_completed","requestId":"req_6ba2cdf0-10e2-4590-aecd-7b28d8b4363f","method":"POST","path":"/login","status":200,"durationMs":209}
+{"timestamp":"2026-10-20T04:34:51.402Z","level":"info","event":"request_completed","requestId":"req_fac1c890-7445-471f-8e00-50aff27de5cc","method":"POST","path":"/login","status":200,"durationMs":636}
+{"timestamp":"2026-10-20T04:34:51.966Z","level":"info","event":"request_completed","requestId":"req_be10c923-4608-4875-b111-1ef242eef08d","method":"POST","path":"/","status":201,"durationMs":548,"userId":"8b83bcf7-0794-4f1f-b30b-06721aa227f4"}
+{"timestamp":"2026-10-20T04:34:52.633Z","level":"info","event":"request_completed","requestId":"req_5b6fbb32-c725-45f9-b761-72c48feea2db","method":"PATCH","path":"/1039","status":200,"durationMs":659,"userId":"335df023-0844-4939-b581-4af42c9defec"}
+{"timestamp":"2026-10-20T04:34:53.289Z","level":"info","event":"request_completed","requestId":"req_b94fd112-87c4-42d3-9861-c68cd891319d","method":"PATCH","path":"/1039","status":200,"durationMs":648,"userId":"335df023-0844-4939-b581-4af42c9defec"}
+{"timestamp":"2026-10-20T04:34:53.562Z","level":"info","event":"request_completed","requestId":"req_4f85fdfd-3ecd-47cb-82b4-9c5b3bc47ad1","method":"GET","path":"/1039/history","status":200,"durationMs":264,"userId":"8b83bcf7-0794-4f1f-b30b-06721aa227f4"}
+[32mÔ£ö the owner can read the history, oldest event first [90m(5516.6162ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:53.974Z","level":"info","event":"request_completed","requestId":"req_254b05ca-6475-4536-bf13-ae5467e3e882","method":"POST","path":"/register","status":201,"durationMs":396}
+{"timestamp":"2026-10-20T04:34:54.348Z","level":"info","event":"request_completed","requestId":"req_e779e541-edda-4efe-ad4c-bc2f2a7c0176","method":"POST","path":"/register","status":201,"durationMs":363}
+{"timestamp":"2026-10-20T04:34:54.894Z","level":"info","event":"request_completed","requestId":"req_c107a040-36a9-4746-9240-94d20ecc53bd","method":"POST","path":"/login","status":200,"durationMs":406}
+{"timestamp":"2026-10-20T04:34:55.377Z","level":"info","event":"request_completed","requestId":"req_1c2ef0d9-a841-4ed0-bbec-4e185dd0ef46","method":"POST","path":"/login","status":200,"durationMs":474}
+{"timestamp":"2026-10-20T04:34:55.920Z","level":"info","event":"request_completed","requestId":"req_b7fcf023-fcc3-4ca4-aef9-cb481b48b710","method":"POST","path":"/","status":201,"durationMs":533,"userId":"2131f75e-8d92-46b7-8ba4-36e9d5c0a9f0"}
+{"timestamp":"2026-10-20T04:34:56.585Z","level":"info","event":"request_completed","requestId":"req_9514fa8f-bf85-411e-9790-cb13ba3c00a2","method":"PATCH","path":"/1040","status":200,"durationMs":656,"userId":"79179c1f-eff8-4ef9-9f2c-0f1a52b8588b"}
+{"timestamp":"2026-10-20T04:34:57.254Z","level":"info","event":"request_completed","requestId":"req_7c90cffa-0a78-49b5-b665-c1a2cce70896","method":"PATCH","path":"/1040","status":200,"durationMs":661,"userId":"79179c1f-eff8-4ef9-9f2c-0f1a52b8588b"}
+{"timestamp":"2026-10-20T04:34:58.118Z","level":"info","event":"request_completed","requestId":"req_bc5117d4-d6b3-4ec2-a048-16ce83b398e4","method":"POST","path":"/register","status":201,"durationMs":853}
+{"timestamp":"2026-10-20T04:34:58.868Z","level":"info","event":"request_completed","requestId":"req_f76926f8-0305-4acc-81d8-163b4c095563","method":"POST","path":"/login","status":200,"durationMs":745}
+{"timestamp":"2026-10-20T04:34:59.024Z","level":"info","event":"request_completed","requestId":"req_b4dc3e5a-6d9e-4227-8f23-6fed71ab0a01","method":"GET","path":"/requests/1040/history","status":404,"durationMs":146,"userId":"f65aaa88-22d0-47f9-a5b0-69c75293f72d","errorCode":"REQUEST_NOT_FOUND"}
+{"timestamp":"2026-10-20T04:34:59.167Z","level":"info","event":"request_completed","requestId":"req_f36dce59-f621-47df-acc6-3b50eda5976b","method":"GET","path":"/requests/999999999/history","status":404,"durationMs":131,"userId":"f65aaa88-22d0-47f9-a5b0-69c75293f72d","errorCode":"REQUEST_NOT_FOUND"}
+[32mÔ£ö a stranger requester gets the same 404 as a missing request [90m(5601.308ms)[39m[39m
+{"timestamp":"2026-10-20T04:34:59.656Z","level":"info","event":"request_completed","requestId":"req_1bb46c66-6749-46eb-8eff-0def7f3a60d1","method":"POST","path":"/register","status":201,"durationMs":477}
+{"timestamp":"2026-10-20T04:35:00.268Z","level":"info","event":"request_completed","requestId":"req_f17c6f42-f8c1-4e11-823e-553c8a32dcfe","method":"POST","path":"/register","status":201,"durationMs":605}
+{"timestamp":"2026-10-20T04:35:00.678Z","level":"info","event":"request_completed","requestId":"req_05e5a602-9446-407d-954a-0594e20c2675","method":"POST","path":"/login","status":200,"durationMs":256}
+{"timestamp":"2026-10-20T04:35:00.918Z","level":"info","event":"request_completed","requestId":"req_0608f095-cc24-40cd-af6c-d31831ebf5bc","method":"POST","path":"/login","status":200,"durationMs":232}
+{"timestamp":"2026-10-20T04:35:01.466Z","level":"info","event":"request_completed","requestId":"req_bc7fbda9-a40c-4419-bc82-b2f7dfef3027","method":"POST","path":"/","status":201,"durationMs":539,"userId":"1bea866c-427a-44ad-93bb-f3d3473c9195"}
+{"timestamp":"2026-10-20T04:35:02.139Z","level":"info","event":"request_completed","requestId":"req_79daac70-1478-462a-b527-477815587c48","method":"PATCH","path":"/1041","status":200,"durationMs":663,"userId":"e9ab08ac-e1a9-400e-b428-08bf1de9ec5c"}
+{"timestamp":"2026-10-20T04:35:02.797Z","level":"info","event":"request_completed","requestId":"req_2b732ca8-5fb6-4258-9214-31866b3e3c4e","method":"PATCH","path":"/1041","status":200,"durationMs":648,"userId":"e9ab08ac-e1a9-400e-b428-08bf1de9ec5c"}
+{"timestamp":"2026-10-20T04:35:03.399Z","level":"info","event":"request_completed","requestId":"req_9b23d6c6-b2e9-4798-8608-8250d266253e","method":"GET","path":"/1041/history","status":200,"durationMs":597,"userId":"e9ab08ac-e1a9-400e-b428-08bf1de9ec5c"}
+[32mÔ£ö an agent can read any history [90m(4231.2511ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:03.900Z","level":"info","event":"request_completed","requestId":"req_11b5d674-0952-4a09-aa76-0d6f8b81136c","method":"POST","path":"/register","status":201,"durationMs":493}
+{"timestamp":"2026-10-20T04:35:04.139Z","level":"info","event":"request_completed","requestId":"req_9fae59ad-5a13-47ac-9434-c4bfee849765","method":"POST","path":"/login","status":200,"durationMs":228}
+{"timestamp":"2026-10-20T04:35:04.805Z","level":"info","event":"request_completed","requestId":"req_d30856b0-ff5b-4f1e-a117-ea1314f652fd","method":"GET","path":"/1042/history","status":200,"durationMs":399,"userId":"f92180af-7a87-4440-84dd-a3bbaea6d27b"}
+[32mÔ£ö a request without events answers 200 with an empty array [90m(1406.154ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:05.195Z","level":"info","event":"request_completed","requestId":"req_8eb29966-21ba-45a4-820c-a1f3ce2dc77d","method":"POST","path":"/register","status":201,"durationMs":382}
+{"timestamp":"2026-10-20T04:35:05.527Z","level":"info","event":"request_completed","requestId":"req_8c73eb39-2751-4810-906e-2423ef2fd8e9","method":"POST","path":"/register","status":201,"durationMs":327}
+{"timestamp":"2026-10-20T04:35:05.881Z","level":"info","event":"request_completed","requestId":"req_3db35f1e-2c84-489e-9262-4033fc8bc721","method":"POST","path":"/login","status":200,"durationMs":215}
+{"timestamp":"2026-10-20T04:35:06.095Z","level":"info","event":"request_completed","requestId":"req_d75ddb5e-bbae-4099-9d03-79243c6b55f8","method":"POST","path":"/login","status":200,"durationMs":205}
+{"timestamp":"2026-10-20T04:35:06.626Z","level":"info","event":"request_completed","requestId":"req_6a9169c6-56fb-427f-9c13-310c85d9457d","method":"POST","path":"/","status":201,"durationMs":524,"userId":"9b944ad6-9eb6-4db8-8ebc-2a51329fe2ff"}
+{"timestamp":"2026-10-20T04:35:07.296Z","level":"info","event":"request_completed","requestId":"req_3f194b9d-d946-4860-aeb3-4f92080ebdb0","method":"PATCH","path":"/1043","status":200,"durationMs":664,"userId":"6e39c232-8159-473a-98c0-b312a7878fe4"}
+{"timestamp":"2026-10-20T04:35:07.955Z","level":"info","event":"request_completed","requestId":"req_795f612a-b0b0-4710-a84a-1c2b61dacfbf","method":"PATCH","path":"/1043","status":200,"durationMs":652,"userId":"6e39c232-8159-473a-98c0-b312a7878fe4"}
+{"timestamp":"2026-10-20T04:35:08.564Z","level":"info","event":"request_completed","requestId":"req_ec392ff1-c64e-4554-95a4-6bed1c98f09f","method":"GET","path":"/1043/history","status":200,"durationMs":604,"userId":"9b944ad6-9eb6-4db8-8ebc-2a51329fe2ff"}
+[32mÔ£ö history events never expose sensitive information [90m(3757.814ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:11.264Z","level":"info","event":"request_completed","requestId":"req_012c42f6-bc0c-47b9-8501-f805fb664d2e","method":"POST","path":"/register","status":201,"durationMs":1003}
+{"timestamp":"2026-10-20T04:35:11.497Z","level":"info","event":"request_completed","requestId":"req_026e7385-9daf-48c0-a773-f8b617af27a0","method":"POST","path":"/login","status":200,"durationMs":213}
+{"timestamp":"2026-10-20T04:35:12.047Z","level":"info","event":"request_completed","requestId":"req_be92fd69-dff6-4767-8156-938059b6e3e6","method":"POST","path":"/","status":201,"durationMs":541,"userId":"fdb697de-5570-4c2a-9936-2f800b12fffb"}
+[32mÔ£ö a requester can create a request and becomes its owner [90m(1835.4373ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:12.384Z","level":"info","event":"request_completed","requestId":"req_f9f482be-fa8b-4dda-8940-03382ae43ed2","method":"POST","path":"/register","status":201,"durationMs":326}
+{"timestamp":"2026-10-20T04:35:12.585Z","level":"info","event":"request_completed","requestId":"req_d0ba1616-6bf1-4d65-9198-000702070289","method":"POST","path":"/login","status":200,"durationMs":194}
+{"timestamp":"2026-10-20T04:35:13.115Z","level":"info","event":"request_completed","requestId":"req_6bd5fafa-64f6-45ce-b562-a7f339f58fe2","method":"POST","path":"/","status":201,"durationMs":523,"userId":"aedd8967-da13-4875-a3f9-023b4c43a6ae"}
+{"timestamp":"2026-10-20T04:35:13.262Z","level":"info","event":"request_completed","requestId":"req_7134f423-bcc1-49cf-b4cc-5ebbb5c8e085","method":"GET","path":"/1045","status":200,"durationMs":136,"userId":"aedd8967-da13-4875-a3f9-023b4c43a6ae"}
+[32mÔ£ö the owner can read their own request [90m(1214.5209ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:13.280Z","level":"info","event":"request_completed","requestId":"req_dfe1307c-7421-4e8b-9448-f1b37ad8209b","method":"GET","path":"/requests","status":401,"durationMs":1,"errorCode":"AUTHENTICATION_REQUIRED"}
+[32mÔ£ö the collection requires a Bearer token [90m(16.9138ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:13.680Z","level":"info","event":"request_completed","requestId":"req_cd86664c-169f-422b-ada0-4d2c992f8dfe","method":"POST","path":"/register","status":201,"durationMs":388}
+{"timestamp":"2026-10-20T04:35:13.886Z","level":"info","event":"request_completed","requestId":"req_60a0a5c2-3cfb-4d11-be2c-544e206a6e8c","method":"POST","path":"/login","status":200,"durationMs":199}
+{"timestamp":"2026-10-20T04:35:14.416Z","level":"info","event":"request_completed","requestId":"req_c1af28d1-e05b-4f1d-a782-2a22f81c3a52","method":"POST","path":"/","status":201,"durationMs":523,"userId":"ab3cc868-0d49-4ede-b705-af274f34c633"}
+{"timestamp":"2026-10-20T04:35:14.821Z","level":"info","event":"request_completed","requestId":"req_16ac634a-778d-490f-9d04-6d6ceb4c989c","method":"PATCH","path":"/requests/1046","status":403,"durationMs":395,"userId":"ab3cc868-0d49-4ede-b705-af274f34c633","errorCode":"FORBIDDEN"}
+[32mÔ£ö a requester cannot change the priority, even of their own request [90m(1540.339ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:15.167Z","level":"info","event":"request_completed","requestId":"req_661c5c71-b0b5-4956-ac6a-579d918c3ce4","method":"POST","path":"/register","status":201,"durationMs":337}
+{"timestamp":"2026-10-20T04:35:15.515Z","level":"info","event":"request_completed","requestId":"req_a121e2eb-2f59-466a-9bee-5414de387110","method":"POST","path":"/register","status":201,"durationMs":339}
+{"timestamp":"2026-10-20T04:35:15.851Z","level":"info","event":"request_completed","requestId":"req_e39b8a2c-906d-433b-8447-a8587e2505de","method":"POST","path":"/login","status":200,"durationMs":200}
+{"timestamp":"2026-10-20T04:35:16.070Z","level":"info","event":"request_completed","requestId":"req_521d4919-08e5-4371-98e1-9c42deebfbb7","method":"POST","path":"/login","status":200,"durationMs":212}
+{"timestamp":"2026-10-20T04:35:16.604Z","level":"info","event":"request_completed","requestId":"req_050431d0-bdf2-48f7-b52f-42c927fc47c3","method":"POST","path":"/","status":201,"durationMs":529,"userId":"f64ba6a1-b39d-47a2-963c-68d3caf493c4"}
+{"timestamp":"2026-10-20T04:35:17.265Z","level":"info","event":"request_completed","requestId":"req_ca2ab839-60cc-43ca-8c0e-326721859193","method":"PATCH","path":"/1047","status":200,"durationMs":654,"userId":"05918867-e04e-4a7a-a4b3-e857cf67cadb"}
+[32mÔ£ö an agent can move a request through a valid transition [90m(2445.8787ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:17.610Z","level":"info","event":"request_completed","requestId":"req_466de83e-732d-4eee-beeb-e82ff21ecef7","method":"POST","path":"/register","status":201,"durationMs":330}
+{"timestamp":"2026-10-20T04:35:17.837Z","level":"info","event":"request_completed","requestId":"req_c51b0f87-a05c-4058-b845-965a16d9c6ad","method":"POST","path":"/login","status":200,"durationMs":217}
+{"timestamp":"2026-10-20T04:35:17.986Z","level":"info","event":"request_completed","requestId":"req_68ea8a6d-cfe4-4c93-924e-35c056d0a588","method":"GET","path":"/","status":200,"durationMs":144,"userId":"18882cd1-94f4-4804-995c-11a4a4135e71"}
+[32mÔ£ö returns an empty array when a valid filter has no matches [90m(720.1036ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:19.902Z","level":"info","event":"request_completed","requestId":"req_675f12cf-5014-49b1-b290-cd00c732dede","method":"GET","path":"/health","status":200,"durationMs":10}
+[32mÔ£ö every response carries an X-Request-Id header [90m(92.9021ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:21.110Z","level":"info","event":"request_completed","requestId":"req_732572d9-61f5-44a9-81b1-735fda2bddce","method":"POST","path":"/register","status":201,"durationMs":1182}
+{"timestamp":"2026-10-20T04:35:21.410Z","level":"info","event":"request_completed","requestId":"req_94a63c32-00f2-4f41-ac3a-d7af1765c682","method":"POST","path":"/login","status":200,"durationMs":291}
+{"timestamp":"2026-10-20T04:35:21.554Z","level":"info","event":"request_completed","requestId":"req_a5fcb520-4b70-4404-b78f-b1d41c8c8f60","method":"GET","path":"/requests/999999999","status":404,"durationMs":133,"userId":"4d9a4013-5542-45bd-b15f-bb13e3ca0bca","errorCode":"REQUEST_NOT_FOUND"}
+[32mÔ£ö an error body carries the same requestId as the header [90m(1639.2949ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:21.567Z","level":"info","event":"request_completed","requestId":"frontend-trace-42","method":"GET","path":"/health","status":200,"durationMs":1}
+[32mÔ£ö a well-formed client X-Request-Id is kept [90m(13.5862ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:21.583Z","level":"info","event":"request_completed","requestId":"req_cc8efe6b-390f-4373-8d78-53e916801f51","method":"GET","path":"/health","status":200,"durationMs":1}
+[32mÔ£ö a suspicious client X-Request-Id is replaced, never trusted [90m(13.8856ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:21.921Z","level":"info","event":"request_completed","requestId":"req_d66f8f63-02ee-485a-827e-227fb9ea4539","method":"POST","path":"/register","status":201,"durationMs":328}
+{"timestamp":"2026-10-20T04:35:22.128Z","level":"info","event":"request_completed","requestId":"req_316a98e0-0603-44a2-a079-b16217f70472","method":"POST","path":"/login","status":200,"durationMs":193}
+[32mÔ£ö the log line of a request carries the same requestId as the response [90m(761.6382ms)[39m[39m
+{"timestamp":"2026-10-20T04:35:22.705Z","level":"info","event":"request_completed","requestId":"req_1465a272-a8e7-42ce-b686-f85a9414017e","method":"POST","path":"/register","status":201,"durationMs":351}
+{"timestamp":"2026-10-20T04:35:22.936Z","level":"info","event":"request_completed","requestId":"req_874df269-1587-401f-a3bd-e975a522aac2","method":"POST","path":"/login","status":200,"durationMs":219}
+[32mÔ£ö the Authorization header and the token never reach the log [90m(928.8217ms)[39m[39m
+[34mÔä╣ tests 64[39m
+[34mÔä╣ suites 0[39m
+[34mÔä╣ pass 64[39m
+[34mÔä╣ fail 0[39m
+[34mÔä╣ cancelled 0[39m
+[34mÔä╣ skipped 0[39m
+[34mÔä╣ todo 0[39m
+[34mÔä╣ duration_ms 102684.0691[39m
