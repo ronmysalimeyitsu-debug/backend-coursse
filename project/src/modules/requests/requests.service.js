@@ -3,7 +3,8 @@ import {
   canChangePriority, 
   canChangeStatus, 
   canEditTitle, 
-  canEditDescription 
+  canEditDescription,
+  canViewRequest
 } from './request.policy.js';
 import {
   findAll,
@@ -63,13 +64,12 @@ export async function listRequests(actor, filters = {}) {
 
 export async function getRequest(actor, id) {
   const row = await findById(id);
-  const userId = getActorId(actor);
 
   if (!row) {
     throw new AppError('resource', 'REQUEST_NOT_FOUND', `Request ${id} does not exist.`);
   }
 
-  if (actor?.role === 'requester' && String(row.created_by) !== String(userId)) {
+  if (!canViewRequest(actor, row)) {
     throw new AppError('resource', 'REQUEST_NOT_FOUND', `Request ${id} does not exist.`);
   }
 
@@ -133,7 +133,7 @@ export async function patchRequest(actor, id, body) {
     if (!current) {
       throw new AppError('resource', 'REQUEST_NOT_FOUND', `Request ${id} does not exist.`);
     }
-    if (actor?.role === 'requester' && String(current.created_by) !== String(userId)) {
+    if (!canViewRequest(actor, current)) {
       throw new AppError('resource', 'REQUEST_NOT_FOUND', `Request ${id} does not exist.`);
     }
 
@@ -173,13 +173,12 @@ export async function patchRequest(actor, id, body) {
 
 export async function getHistory(actor, id) {
   const request = await findById(id);
-  const userId = getActorId(actor);
 
   if (!request) {
     throw new AppError('resource', 'REQUEST_NOT_FOUND', `Request ${id} does not exist.`);
   }
 
-  if (actor?.role === 'requester' && String(request.created_by) !== String(userId)) {
+  if (!canViewRequest(actor, request)) {
     throw new AppError('resource', 'REQUEST_NOT_FOUND', `Request ${id} does not exist.`);
   }
 

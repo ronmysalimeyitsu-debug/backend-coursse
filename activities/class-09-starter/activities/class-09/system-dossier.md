@@ -99,31 +99,33 @@ Recorrido completo de `GET /requests/:id` — en orden, con archivo y función e
 
 ## 8. Change impact
 
-### 1. What changes (Qué cambia)
-- Se actualizará la función del servicio (`src/modules/requests/requests.service.js` en `getRequest`) para incorporar la validación explícita de la política de visibilidad (`canViewRequest`) antes de retornar el recurso.
-- Se eliminará cualquier comentario temporal de parche previo si existiera.
+### What changes
+- Se actualizará la función del servicio (`src/modules/requests/requests.service.js` en `getRequest`) para incorporar la validación explícita de la política de visibilidad (`canViewRequest`).
 
-### 2. What must NOT change (Qué NO debe cambiar)
-- El dueño de una solicitud o un agente autorizado deben seguir recibiendo un código HTTP `200 OK` con exactamente el mismo formato JSON y contrato de claves.
-- La lista general de solicitudes (`GET /requests`) debe seguir filtrando por rol exactamente igual que antes.
-- La política (`src/modules/requests/request.policy.js`) debe mantenerse pura (sin dependencias de Express ni SQL, evaluándose en milisegundos).
-- El error devuelto al intentar ver un recurso no visible u omitido debe ser un `404 Not Found` uniforme, usando el código exacto `REQUEST_NOT_FOUND` para evitar la enumeración de IDs (prevención IDOR).
+### What must NOT change
+- El dueño de una solicitud o un agente autorizado deben seguir recibiendo un código HTTP `200 OK` con el mismo formato JSON de contrato.
+- La lista general de solicitudes debe seguir filtrando por rol exactamente igual que antes.
 
-### 3. Risks (Riesgos)
-- **Riesgo:** Si por error la política se evalúa con el actor incorrecto, los agentes podrían perder visibilidad sobre solicitudes que necesitan atender.
-- **Riesgo:** Responder un error `403 Forbidden` en vez de `404 Not Found` confirmaría la existencia real de los identificadores ajenos, facilitando ataques de enumeración horizontal.
-- **Mitigación:** Reutilizar estrictamente la función de política existente y validar mediante pruebas automatizadas rigurosas con múltiples usuarios.
+### Risks
+- Si por error la política se evalúa con el actor incorrecto, los agentes podrían perder visibilidad sobre solicitudes que atienden.
+- Mitigación: Reutilizar estrictamente la función de política existente y validar con pruebas automatizadas.
 
-### 4. How it will be verified (Cómo se verificará)
-- **Observable behavior:** Un usuario requester sin permisos no puede acceder al detalle ni historial de peticiones ajenas; el sistema responde con `404 Not Found` de forma indistinguible de un recurso inexistente.
-- **Files affected:** `src/modules/requests/requests.service.js`, `src/modules/requests/request.policy.js`, y `test/request-detail.test.js`.
-- **Data required:** `actor.userId`, `actor.role`, y el campo `createdBy` del recurso `request`.
-- **Status codes:** 
-  - Acceso autorizado (owner / agent): `200 OK`
-  - Recurso no encontrado o ajeno (anti-enumeración IDOR): `404 Not Found`
-  - Sin token / inválido: `401 Unauthorized`
-- **Tests verified:** Ejecución de la suite `npm run test:detail`, validando los 6 casos de prueba en verde (`pass 6 / fail 0`).
+### How it will be verified
+- Mediante la ejecución de la suite de pruebas automatizadas del detalle.
 
+### Files likely affected
+- `src/modules/requests/requests.service.js`
+- `src/modules/requests/request.policy.js`
+- `test/request-detail.test.js`
+
+### Rule to protect
+- Un requester solo puede ver y seguir sus propias solicitudes; un agent puede ver todas las solicitudes de la colección.
+
+### Tests to add or change
+- Conversión de las pruebas de regresión y verificación de visibilidad en `test/request-detail.test.js`.
+
+### Behavior that remains unchanged
+- Los accesos legítimos del propietario (200) y de los agentes autorizados funcionan con el mismo contrato y esquema de respuesta.
 ## 9. Unknowns and questions
 
 - **Resuelta:** ¿Cómo se propaga el objeto `req.auth`? El middleware `authenticate.js` descodifica y valida el JWT, adscribiendo el resultado a `req.auth = { userId, role }`. Luego, el controlador o router extrae `req.auth` y lo pasa como primer argumento `actor` a las funciones del servicio (`requests.service.js`), garantizando que la capa de servicio nunca dependa de objetos HTTP (`req` o `res`).

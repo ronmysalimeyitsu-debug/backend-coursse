@@ -1,1 +1,55 @@
-[PEGAR AQUÍ la salida real y completa de npm run validate:class-09 terminando en FINAL RESULT: PASSED]
+
+> class-09-request-api@8.0.0 validate:class-09
+> node scripts/validate-class-09.js
+
+CLASS 09 SYSTEM VALIDATION
+
+Environment
+[01/14] Required environment variables ........... PASS
+[02/14] Database connection ...................... PASS
+
+System dossier
+[03/14] Required sections exist .................. PASS
+[04/14] Request trace references real files ...... PASS
+[05/14] Audit uses allowed classifications ....... PASS
+[06/14] Change impact completed .................. FAIL
+
+Authorization
+[07/14] Unauthenticated request returns 401 ...... PASS
+[08/14] Owner requester receives 200 ............. PASS
+[09/14] Other requester receives 404 ............. PASS
+[10/14] Agent receives 200 ....................... PASS
+[11/14] Body/query userId cannot grant access .... PASS
+
+Boundaries and regression
+[12/14] Policy has no Express dependency ......... PASS
+[13/14] Regression suite passes .................. FAIL
+[14/14] No secrets included in submissions ....... PASS
+
+Cleanup
+Temporary validation data removed successfully.
+
+[FAIL] Change impact completed
+
+Expected:
+every impact subsection present
+
+Received:
+missing: Observable behavior, Status codes, Behavior that must remain unchanged
+
+Review:
+- keep the template subheadings
+
+[FAIL] Regression suite passes
+
+Expected:
+npm test fully green (including your new regression tests)
+
+Received:
+the suite exited with failures
+
+Review:
+- run npm test and read the first failing test
+- a fix that breaks a neighbor changed more than the ticket asked
+
+FINAL RESULT: FAILED (12/14)

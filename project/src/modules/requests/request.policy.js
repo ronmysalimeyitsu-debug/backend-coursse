@@ -21,3 +21,17 @@ export function canEditDescription(actor, current) {
     current.status === 'open'
   );
 }
+
+export function canViewRequest(actor, request) {
+  if (actor?.role === 'agent') {
+    return true;
+  }
+
+  if (actor?.role === 'requester') {
+    const ownerId = String(request?.created_by ?? '');
+    const actorId = String(actor?.userId ?? actor?.id ?? actor?.sub ?? '');
+    return ownerId === actorId && ownerId !== '';
+  }
+
+  return false;
+}
