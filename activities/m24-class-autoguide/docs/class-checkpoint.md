@@ -31,4 +31,4 @@
 
 ## Siguiente paso
 
-Completar los estados de interfaz que faltan, cubrir la matriz restante —en especial roles limitados—, completar evidencia personal, revisar cambios M24 en Git y publicar solo los archivos de la actividad.
+El código M24 ya se publicó en `main`. El estudiante debe completar su reflexión personal, preparar la defensa/video, cubrir más escenarios de la matriz y no añadir al commit los cambios preexistentes ajenos a M24.

@@ -8,7 +8,7 @@ Pendiente de completar por el estudiante.
 
 - Repositorio: `ronmysalimeyitsu-debug/backend-coursse`
 - Ruta de actividad: `activities/m24-class-autoguide`
-- Commit: pendiente de preparar y revisar con el usuario.
+- Commit de implementación publicado en `main`: `6609c5a`.
 
 ## Resumen del producto
 
