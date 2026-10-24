@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "m24-validator-1",
+  "generatedAt": "2026-10-24T04:42:52.056Z",
+  "target": "http://127.0.0.1:3000/api/v1",
+  "mode": "purchase",
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0
+  },
+  "checks": [
+    {
+      "name": "health returns 200",
+      "passed": true,
+      "durationMs": 314,
+      "detail": "process is alive"
+    },
+    {
+      "name": "ready returns 200",
+      "passed": true,
+      "durationMs": 1001,
+      "detail": "dependencies are ready"
+    },
+    {
+      "name": "public machine is readable",
+      "passed": true,
+      "durationMs": 275,
+      "detail": "machine representation received"
+    },
+    {
+      "name": "public catalog is readable",
+      "passed": true,
+      "durationMs": 283,
+      "detail": "catalog representation received"
+    },
+    {
+      "name": "unknown public code returns safe 404",
+      "passed": true,
+      "durationMs": 156,
+      "detail": "RESOURCE_NOT_FOUND"
+    },
+    {
+      "name": "empty order is rejected consistently",
+      "passed": true,
+      "durationMs": 30,
+      "detail": "VALIDATION_ERROR"
+    },
+    {
+      "name": "order can be created",
+      "passed": true,
+      "durationMs": 1647,
+      "detail": "order 5468564c-45c4-4096-bb3c-501caffc0e2d"
+    },
+    {
+      "name": "same order key returns the same order",
+      "passed": true,
+      "durationMs": 680,
+      "detail": "5468564c-45c4-4096-bb3c-501caffc0e2d"
+    },
+    {
+      "name": "same key with different payload conflicts",
+      "passed": true,
+      "durationMs": 690,
+      "detail": "IDEMPOTENCY_CONFLICT"
+    },
+    {
+      "name": "simulated payment can be approved",
+      "passed": true,
+      "durationMs": 1620,
+      "detail": "payment accepted"
+    },
+    {
+      "name": "payment retry does not create another attempt",
+      "passed": true,
+      "durationMs": 683,
+      "detail": "a1fdb15b-7a8b-402a-9507-9b59fcf79b65"
+    }
+  ]
+}

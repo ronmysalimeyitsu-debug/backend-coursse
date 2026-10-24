@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>M24 · Administración</title>
+    <link rel="stylesheet" href="/admin/styles.css">
+    <script type="module" src="/admin/app.js"></script>
+  </head>
+  <body>
+    <header><a href="/buyer/">M24</a><span>Panel de administración</span><a href="/admin/platform.html">Administración de plataforma</a></header>
+    <main>
+      <section id="login-panel" class="panel">
+        <h1>Iniciar sesión</h1>
+        <p>Usa la cuenta demo creada por el seed.</p>
+        <p id="login-notice" role="status" class="notice" aria-live="polite"></p>
+        <form id="login-form">
+          <label>Correo<input name="email" type="email" autocomplete="username" required></label>
+          <label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label>
+          <button>Entrar</button>
+        </form>
+      </section>
+      <section id="dashboard" hidden>
+        <div class="heading">
+          <div><p class="eyebrow">TENANT ACTIVO</p><h1 id="tenant-name">M24</h1></div>
+          <label>Empresa<select id="tenant-select" aria-label="Tenant activo"></select></label>
+          <button id="logout" class="secondary">Cerrar sesión</button>
+        </div>
+        <p id="notice" role="status" class="notice"></p>
+        <aside id="one-time-secret" class="panel secret-panel" hidden></aside>
+        <div class="grid">
+          <section class="panel"><h2>Resumen</h2><pre id="overview">Cargando…</pre></section>
+          <section class="panel"><h2>Inventario</h2><div id="inventory" class="inventory"></div></section>
+        </div>
+        <section class="grid management-grid">
+          <section class="panel" data-permission="locations.manage">
+            <h2>Crear ubicación</h2>
+            <form id="location-form">
+              <label>Código<input name="code" maxlength="40" required></label>
+              <label>Nombre<input name="name" maxlength="160" required></label>
+              <label>Zona horaria<input name="timezone" value="UTC" maxlength="80" required></label>
+              <button>Crear ubicación</button>
+            </form>
+            <div id="locations" class="inventory"></div>
+          </section>
+          <section class="panel" data-permission="products.manage">
+            <h2>Crear producto</h2>
+            <form id="product-form">
+              <label>SKU<input name="sku" maxlength="80" required></label>
+              <label>Nombre<input name="name" maxlength="160" required></label>
+              <label>Precio (centavos)<input name="priceMinor" type="number" min="0" step="1" required></label>
+              <label>Moneda<input name="currency" value="USD" pattern="[A-Za-z]{3}" required></label>
+              <button>Crear producto</button>
+            </form>
+            <div id="products" class="inventory"></div>
+          </section>
+          <section class="panel" data-permission="machines.manage">
+            <h2>Crear máquina</h2>
+            <form id="machine-form">
+              <label>Ubicación<select name="locationId" required></select></label>
+              <label>Código interno<input name="code" maxlength="40" required></label>
+              <label>Nombre<input name="name" maxlength="160" required></label>
+              <button>Crear máquina</button>
+            </form>
+            <div id="machines" class="inventory"></div>
+          </section>
+          <section class="panel" data-permission="machines.manage">
+            <h2>Crear slot</h2>
+            <form id="slot-form">
+              <label>Máquina<select name="machineId" required></select></label>
+              <label>Producto<select name="productId" required></select></label>
+              <label>Posición<input name="position" maxlength="40" required></label>
+              <label>Capacidad<input name="capacity" type="number" min="0" step="1" required></label>
+              <button>Crear slot</button>
+            </form>
+          </section>
+          <section class="panel" data-permission="members.manage">
+            <h2>Agregar miembro</h2>
+            <form id="member-form">
+              <label>Correo<input name="email" type="email" maxlength="320" required></label>
+              <label>Nombre<input name="displayName" maxlength="160" required></label>
+              <label>Contraseña inicial<input name="password" type="password" minlength="12" autocomplete="new-password"></label>
+              <label>Rol<select name="roleId" required></select></label>
+              <button>Agregar miembro</button>
+            </form>
+            <div id="members" class="inventory"></div>
+          </section>
+          <section class="panel" data-permission="roles.manage">
+            <h2>Crear rol personalizado</h2>
+            <form id="role-form">
+              <label>Nombre<input name="name" maxlength="80" required></label>
+              <label>Descripción<input name="description" maxlength="500"></label>
+              <fieldset id="role-permissions"><legend>Permisos</legend></fieldset>
+              <button>Crear rol</button>
+            </form>
+            <div id="roles" class="inventory"></div>
+          </section>
+        </section>
+        <section class="grid management-grid">
+          <section class="panel" data-permission="orders.read"><h2>Órdenes</h2><div id="orders" class="inventory"></div></section>
+          <section class="panel" data-permission="payments.read"><h2>Pagos</h2><div id="payments" class="inventory"></div></section>
+          <section class="panel" data-permission="dispensing.read"><h2>Despachos</h2><div id="dispense-jobs" class="inventory"></div></section>
+          <section class="panel" data-permission="reports.read">
+            <h2>Reportes</h2>
+            <form id="report-form">
+              <label>Desde<input name="from" type="date"></label>
+              <label>Hasta<input name="to" type="date"></label>
+              <button>Actualizar reportes</button>
+            </form>
+            <pre id="reports">Selecciona un rango para consultar.</pre>
+          </section>
+          <section class="panel" data-permission="audit.read"><h2>Auditoría</h2><div id="audit-events" class="inventory"></div></section>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

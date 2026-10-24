@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>M24 · Comprar</title>
+    <link rel="stylesheet" href="/buyer/styles.css">
+    <script type="module" src="/buyer/buyer.js"></script>
+  </head>
+  <body>
+    <main>
+      <header><a href="/">M24</a><a href="/simulator">Simulador</a></header>
+      <section class="hero"><p class="eyebrow">COMPRA RÁPIDA</p><h1 id="machine-name">Cargando máquina…</h1><p id="machine-location"></p></section>
+      <p id="notice" role="status" class="notice"></p>
+      <section id="catalog" class="catalog"></section>
+      <section id="checkout" class="panel" hidden>
+        <h2>Tu pedido</h2><div id="order-summary"></div>
+        <button id="pay">Simular pago aprobado</button>
+        <button id="decline" class="secondary">Simular pago rechazado</button>
+      </section>
+      <section id="tracking" class="panel" hidden><h2>Seguimiento</h2><pre id="order-status"></pre></section>
+    </main>
+  </body>
+</html>

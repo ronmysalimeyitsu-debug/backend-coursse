@@ -1,0 +1,12 @@
+# Local tooling and generated files
+.vscode/
+node_modules/
+dist/
+package-lock.json
+!activities/m24-class-autoguide/package-lock.json
+supabse DB.session.sql
+
+# Local environment files
+.env
+.env.*
+!.env.example

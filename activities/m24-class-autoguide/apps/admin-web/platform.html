@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>M24 · Administración de plataforma</title>
+    <link rel="stylesheet" href="/admin/styles.css">
+    <script type="module" src="/admin/platform.js"></script>
+  </head>
+  <body>
+    <header><a href="/admin/">M24</a><span>Administración de plataforma</span><a href="/admin/">Administración del tenant</a></header>
+    <main>
+      <section id="login-panel" class="panel">
+        <h1>Iniciar sesión de plataforma</h1>
+        <p>Usa la cuenta de plataforma configurada para el seed.</p>
+        <p id="login-notice" role="status" class="notice" aria-live="polite"></p>
+        <form id="login-form">
+          <label>Correo<input name="email" type="email" autocomplete="username" required></label>
+          <label>Contraseña<input name="password" type="password" autocomplete="current-password" required></label>
+          <button>Entrar</button>
+        </form>
+      </section>
+      <section id="dashboard" hidden>
+        <div class="heading">
+          <div><p class="eyebrow">ADMINISTRACIÓN GLOBAL</p><h1>Tenants</h1></div>
+          <button id="logout" class="secondary">Cerrar sesión</button>
+        </div>
+        <p id="notice" role="status" class="notice" aria-live="polite"></p>
+        <div class="grid">
+          <section class="panel">
+            <h2>Crear tenant</h2>
+            <form id="tenant-form">
+              <label>Slug<input name="slug" pattern="[a-z0-9]+(?:-[a-z0-9]+)*" maxlength="80" required></label>
+              <label>Nombre<input name="name" maxlength="160" required></label>
+              <label>Nombre del administrador<input name="adminDisplayName" maxlength="160" required></label>
+              <label>Correo del administrador<input name="adminEmail" type="email" maxlength="320" required></label>
+              <label>Contraseña inicial<input name="adminPassword" type="password" minlength="12" autocomplete="new-password" required></label>
+              <button>Crear tenant</button>
+            </form>
+          </section>
+          <section class="panel">
+            <div class="heading"><h2>Tenants registrados</h2><button id="reload-tenants" class="secondary">Actualizar</button></div>
+            <div id="tenants" class="inventory" aria-live="polite"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

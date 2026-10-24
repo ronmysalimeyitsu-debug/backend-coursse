@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>M24 · Simulador de máquina</title>
+    <link rel="stylesheet" href="/buyer/styles.css">
+    <script type="module" src="/buyer/simulator.js"></script>
+  </head>
+  <body>
+    <main>
+      <header><a href="/">M24</a><a href="/admin/">Administración</a></header>
+      <section class="hero"><p class="eyebrow">SIMULADOR DE DISPOSITIVO</p><h1>Vending machine</h1><p id="state">Desconectada</p></section>
+      <section class="panel">
+        <form id="connect-form">
+          <label>Código público<input name="publicCode" value="mach-demo-alpha-01" required></label>
+          <label>Clave del dispositivo<input name="deviceKey" type="password" autocomplete="off" required></label>
+          <button>Conectar máquina</button>
+        </form>
+        <figure id="qr-panel" hidden><img id="machine-qr" alt="QR para abrir el catálogo público de esta máquina"><figcaption>Escanea para abrir el catálogo del comprador</figcaption></figure>
+        <p id="notice" role="status" class="notice"></p>
+      </section>
+      <section class="panel"><h2>Trabajo actual</h2><pre id="job">Esperando autenticación.</pre><button id="success" disabled>Confirmar despacho</button> <button id="failure" class="secondary" disabled>Simular fallo</button></section>
+    </main>
+  </body>
+</html>

@@ -216,3 +216,83 @@ Sí se espera que puedas navegar tu sistema, explicar sus reglas, encontrar evid
 - `templates/`: archivos que debes completar como evidencia;
 - `validator/`: comprobador común y sus instrucciones.
 
+## Implementación ejecutable de M24
+
+Esta carpeta también incluye una primera versión funcional de la plataforma:
+
+- `src/`: API Express, autenticación, contexto de tenant, operaciones transaccionales y vencimiento de reservas;
+- `database/migrations/`: esquema PostgreSQL con claves foráneas, restricciones e índices;
+- `scripts/`: migración versionada y seed repetible;
+- `apps/admin-web/`: panel de administración demo;
+- `apps/vending-web/`: comprador público y simulador de dispositivo;
+- `test/`: pruebas unitarias y de los endpoints operativos.
+
+La migración se instala en el esquema PostgreSQL `m24_class_autoguide`, con `search_path` propio para que tablas de otras actividades en `public` no se mezclen ni se sobrescriban.
+
+### Requisitos y configuración local
+
+Necesitas Node.js 20 o superior y una base PostgreSQL/Supabase. No reemplaces un `.env` existente: conserva la conexión configurada y completa únicamente las variables que falten tomando `.env.example` como referencia.
+
+Variables requeridas:
+
+```text
+DATABASE_URL
+JWT_SECRET                 # mínimo 32 caracteres aleatorios
+DB_SSL=true                # para Supabase; usa false solo en PostgreSQL local
+DEVICE_KEY                 # mínimo 32 caracteres aleatorios; el seed no imprime ni guarda la clave en texto plano
+DEMO_ADMIN_EMAIL
+DEMO_ADMIN_PASSWORD
+PLATFORM_ADMIN_EMAIL
+PLATFORM_ADMIN_PASSWORD
+PORT=3000
+```
+
+Genera secretos localmente en PowerShell, sin copiarlos a Git:
+
+```powershell
+[Convert]::ToBase64String([Security.Cryptography.RandomNumberGenerator]::GetBytes(48))
+```
+
+Usa el resultado para `JWT_SECRET`, `DEVICE_KEY` y `DEMO_ADMIN_PASSWORD` (un valor diferente para cada variable). `.env` está excluido de Git; nunca pegues su contenido en tickets, chats o capturas.
+
+### Instalar, migrar y arrancar
+
+Desde esta carpeta:
+
+```powershell
+npm install
+npm run db:migrate
+npm run db:seed
+npm test
+npm start
+```
+
+El seed crea dos tenants, cada uno con una ubicación, máquina, producto, slot y diez unidades iniciales. Si las variables `DEMO_ADMIN_*` y `PLATFORM_ADMIN_*` están configuradas, crea además un administrador del tenant Alpha y un administrador de plataforma. Ejecutar el seed de nuevo no reinicia el stock ya operado.
+
+Con el servidor arriba:
+
+- página inicial: `http://localhost:3000/`;
+- administración: `http://localhost:3000/admin/`;
+- administración de tenants: `http://localhost:3000/admin/platform.html`;
+- comprador/QR demo: `http://localhost:3000/buy?machine=mach-demo-alpha-01`;
+- simulador: `http://localhost:3000/simulator`;
+- salud y readiness: `/health` y `/ready`;
+- API versionada: `/api/v1`.
+
+El simulador acepta el `publicCode` y el mismo `DEVICE_KEY` configurado para el seed. La clave se guarda en la base solo como SHA-256. El administrador de plataforma puede crear, consultar, suspender y reactivar tenants; los cambios quedan auditados.
+
+### Alcance implementado y límites conocidos
+
+La API cubre autenticación y cambio de tenant, roles/permisos, membresías, ciclo de vida de tenants, ubicaciones, máquinas, productos y slots, inventario, órdenes, pagos simulados, despacho, auditoría y reportes con filtros. La experiencia pública y el simulador usan la API real. Las órdenes reservan stock transaccionalmente, los jobs se reclaman con `SKIP LOCKED` y las confirmaciones repetidas no duplican movimientos.
+
+El panel de tenant ofrece selección de tenant, resumen, inventario, formularios para ubicación/producto/máquina/slot/miembro/rol y vistas de órdenes, pagos, despachos, reportes y auditoría. Algunas acciones de edición y asignación de permisos siguen disponibles solo por API. La administración global de tenants tiene su propia pantalla. La integración automatizada prueba dos compras simultáneas sobre la última unidad; no es una prueba de carga sostenida. No hay reconciliación programada; el pago y el despacho son simulados y no representan integraciones reales. La guía de aprendizaje y la defensa personal deben completarse por el estudiante, no pueden sustituirse por una implementación generada.
+
+Comprobaciones:
+
+```powershell
+npm test
+# Con el servidor activo, la base migrada y el seed aplicado:
+npm run test:integration
+```
+
+`npm run test:integration` crea tenants de prueba y los archiva al terminar. El validador de la actividad está en `validator/`; su modo `purchase` genera el reporte `m24-validation-report.json`. La migración y el seed usan el esquema dedicado `m24_class_autoguide` para no mezclar tablas existentes en `public`. Ejecuta `npm run db:migrate` solo después de revisar que `DATABASE_URL` apunte a la base prevista.
